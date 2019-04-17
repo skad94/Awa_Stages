@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.special import gamma
 from matplotlib import pyplot as plt
+import scipy.integrate as integrate
 
 def BM(borne_min,T,n):
     dt = (T-borne_min)/n
@@ -73,8 +74,72 @@ def plot_fBM2(H,T,n):
     plt.legend(["H = " + str(h) for h in H])
     plt.show()
 
+
+def my_cos(t,k,T):
+    return np.cos(np.pi*t*k/T)
+
+def my_sin(t,k,T):
+    return np.sin(np.pi*t*k/T)
+
+def c0_KL(H,T): # on définit les coefficients qui interviennent dans la méthode par "series expansion"
+    if H < 1/2:
+        return 0
+    return H*(T**(2*H-2))
+
+def ck_KL(H,T,k):
+    def f_(u):
+        return (u**(2*H))*my_cos(u,k,T)
+    def g_(u):
+        return (u**(2*H-2))*my_cos(u,k,T)
+    if H < 1/2:
+        return (2/T)*integrate.quad(f_, 0, T)[0]
+    return (-4*H*(2*H-1)*T/((k*np.pi)**2))*integrate.quad(g_, 0, T)[0]
+
+def fBM3(H,T,Nmax,n): # simulation des trajectoires par "series expansion"
+    dt = T/n
+    fW = np.zeros(n+1)
+    N = np.random.normal(0,1,2*Nmax+1)
+    ck = [ck_KL(H,T,k) for k in range(1,Nmax+1)]
+    for i in range(1,n+1):
+        res = np.sqrt(c0_KL(H,T))*i*dt*N[0]
+        for k in range(1,Nmax+1):
+            tmp = np.sqrt(-ck[k-1]/2)
+            res += tmp*(my_sin(i*dt,k,T)*N[2*k] + (1 - my_cos(i*dt,k,T))*N[2*k-1])
+        fW[i] = res
+    return fW
+        
+def plot_fBM3(H,T,Nmax,n):
+    dt = T/n
+    fBMs = [fBM3(h,T,Nmax,n) for h in H]
+    X = [i*dt for i in range(n+1)]
+    plt.figure()
+    for m in fBMs:
+        plt.plot(X,m)
+    plt.xlabel("t")
+    plt.ylabel("W(t,H)")
+    plt.title("Simulation fBM par \"series expansion\"")
+    plt.legend(["H = " + str(h) for h in H])
+    plt.show()
+
+
+
 #plot_fBM([0.1,0.3,0.5,0.8],-198,2,100000)
-#plot_fBM2([0.2,0.3,0.5,0.8],2,1000)
+#plot_fBM2([0.2,0.5,0.8],2,1000)
+plot_fBM3([0.2,0.45,0.7],1,200,200)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -101,4 +166,17 @@ def plot_fBM2(H,T,n):
 
 #verif()
 
+
+#def trapezes_stochastique(a,b,K,f,W): # calcul d'une intégrale stochastique par la méthode des trapèzes
+#    delta = (b - a)/K
+#    res = 0
+#    for i in range(K):
+#        res += (f(a + (i+1)*delta) + f(a + i*delta))*(W[a + (i+1)*delta] - W[a + i*delta])/2
+#    return res
+
+#def trapezes(T,dt,f):
+#    res = 0.9*dt*(f(0.1*dt) + f(dt))/2
+#    for i in range(1,int(T/dt)):
+#        res += dt*(f((i+1)*dt) + f(i*dt))/2
+#    return res
 

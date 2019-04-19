@@ -76,6 +76,8 @@ def plot_fBM2(H,T,n):
     plt.ylabel("W(t,H)")
     plt.title("Simulation fBM par décomposition de Cholesky")
     plt.legend(["H = " + str(h) for h in H])
+    elapsed_time = time.time() - start_time
+    print("time = " + str(elapsed_time))
     plt.show()
 
 
@@ -123,15 +125,13 @@ def plot_fBM3(H,T,Nmax,n):
     plt.ylabel("W(t,H)")
     plt.title("Simulation fBM par \"series expansion\"")
     plt.legend(["H = " + str(h) for h in H])
-    elapsed_time = time.time() - start_time
-    print("time = " + str(elapsed_time))
     plt.show()
 
 
 
-#plot_fBM([0.1,0.3,0.5,0.8],-198,2,100000)
-#plot_fBM2([0.2,0.5,0.8],2,1000)
-plot_fBM3([0.2,0.45,0.7],1,200,300)
+#plot_fBM([0.3,0.5,0.7],-198,2,100000)
+#plot_fBM2([0.3,0.5,0.7],2,1000)
+#plot_fBM3([0.3,0.55,0.7],1,240,300)
 
 
 

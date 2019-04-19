@@ -88,11 +88,11 @@ def regr_skew():
     reg_skew = LinearRegression().fit(dates.reshape(-1,1),skew)
 
     plt.figure(3)
-    plt.plot(dates,skew,'o')
-    plt.plot(dates,np.dot(dates.reshape(-1,1),reg_skew.coef_) + reg_skew.intercept_)
-    plt.title("SPX : ATM log skew en fonction du log de la maturité. alpha = " + str(round(float(reg_skew.coef_),2)))
-    plt.legend(['ATM log skew','linear fit'])
+    plt.plot(np.exp(dates),np.exp(skew),'o')
+    plt.plot(np.exp(dates),np.exp(np.dot(dates.reshape(-1,1),reg_skew.coef_) + reg_skew.intercept_))
+    plt.title("SPX : ATM skew en fonction de la maturité. alpha = " + str(round(-float(reg_skew.coef_),2)))
+    plt.legend(['ATM skew','fit'])
     print(reg_skew.score(dates.reshape(-1,1),skew))
     plt.show()
 
-regr_skew()
+#regr_skew()

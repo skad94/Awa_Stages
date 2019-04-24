@@ -3,6 +3,8 @@ from scipy.special import gamma
 from matplotlib import pyplot as plt
 import scipy.integrate as integrate
 import time
+import os
+import pandas as pd
 
 start_time = time.time()
 
@@ -49,7 +51,9 @@ def plot_fBM(H,borne_min,T,n):
     plt.ylabel("W(t,H)")
     plt.title("Simulation fBM par représentation de Mandelbrot - Van Ness")
     plt.legend(["H = " + str(h) for h in H])
-    plt.show()
+    elapsed_time = time.time() - start_time
+    print("time = " + str(elapsed_time))
+
 
 def cov_fBM(s,t,H): # fonction de covariance du fBM
     return (s**(2*H) + t**(2*H) - np.abs(t-s)**(2*H))/2
@@ -78,7 +82,6 @@ def plot_fBM2(H,T,n):
     plt.legend(["H = " + str(h) for h in H])
     elapsed_time = time.time() - start_time
     print("time = " + str(elapsed_time))
-    plt.show()
 
 
 def my_cos(t,k,T):
@@ -125,13 +128,14 @@ def plot_fBM3(H,T,Nmax,n):
     plt.ylabel("W(t,H)")
     plt.title("Simulation fBM par \"series expansion\"")
     plt.legend(["H = " + str(h) for h in H])
-    plt.show()
-
+    elapsed_time = time.time() - start_time
+    print("time = " + str(elapsed_time))
 
 
 #plot_fBM([0.3,0.5,0.7],-198,2,100000)
-#plot_fBM2([0.3,0.5,0.7],2,1000)
+#plot_fBM2([0.35],2,1000)
 #plot_fBM3([0.3,0.55,0.7],1,240,300)
+#plt.show()
 
 
 
@@ -142,13 +146,25 @@ def plot_fBM3(H,T,Nmax,n):
 
 
 
+# Morceau de code pour plot des données de vol réalisée :
+
+#os.chdir('C:\\Users\lroussel\Documents\Données Reuters') 
+#data_ = 'FTSE 100 30min'
+#df = pd.read_excel(data_ + ".xlsx", index_col=None, header=None)
+#aa = np.flip(np.array(df)[1:])
+#plt.figure()
+#plt.title("FTSE 100 intraday 30min vol")
+#plt.plot(aa)
+#plt.show()
 
 
+# Exporter des trajectoires en fichier excel pour voir quel H on retrouve de manière empirique :
 
-
-
-
-
+#fBMs_ = [fBM2(h,2,1000) for h in np.arange(1,10)/10]
+#d_ = {'0.1':fBMs_[0],'0.2':fBMs_[1],'0.3':fBMs_[2],'0.4':fBMs_[3],'0.5':fBMs_[4],'0.6':fBMs_[5],
+#      '0.7':fBMs_[6],'0.8':fBMs_[7],'0.9':fBMs_[8]}
+#ddf = pd.DataFrame(d_,columns = ['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9'])
+#export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Données Reuters\export_fBMs.xlsx', index = None, header=True)
 
 
 

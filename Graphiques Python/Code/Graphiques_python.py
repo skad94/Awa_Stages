@@ -15,7 +15,7 @@ aa = np.flip(np.array(df)[1:])
 n = len(aa)
 
 
-# Etude de l'aspect "rough" grâce à la voltilité réalisée et recherche de l'exposant de Hurst H :
+# Etude de l'aspect "rough" grâce à la volatilité réalisée et recherche de l'exposant de Hurst H :
 
 def m(q,delta): # fonction qui renvoie le moment d'ordre q des différences de log-volatilité en fonction du lag delta
     diff_log = []
@@ -29,10 +29,10 @@ def m(q,delta): # fonction qui renvoie le moment d'ordre q des différences de l
 
 def regr():
     # On trace log(m(q,delta)) en fonction de log(delta), pour différentes valeurs de q
-    N = 8 # nombre de valeurs de q
-    q_ = np.arange(1,N+1)/4
-    x = np.log(np.arange(1,int(np.exp(4)))) # x = log(delta)
-    y = [[np.log(m(q,delta)) for delta in np.arange(1,int(np.exp(4)))] for q in q_]
+    N = 4 # nombre de valeurs de q
+    q_ = np.arange(1,N+1)/2
+    x = np.log(np.arange(1,int(np.exp(3)))) # x = log(delta)
+    y = [[np.log(m(q,delta)) for delta in np.arange(1,int(np.exp(3)))] for q in q_]
     plt.figure(1)
     for i in y: 
         plt.plot(x,i,'o')
@@ -63,6 +63,22 @@ def regr():
     plt.show()
 
 #regr()
+
+
+
+# Ce morceau de code sert à retrouver H à partir d'une simulation trajectoire de MBf :
+
+data_ = 'export_fBMs' 
+df = pd.read_excel(data_ + ".xlsx")
+aa = np.array(df)[1:]
+jj = [aa[:,i] for i in range(9)]
+n = len(jj[0])
+for i in range(9):
+   jj[i] = jj[i] - np.min(jj[i])*2
+aa = jj[4] # modifier cette ligne en mettant un entier entre 0 et 8 entre les crochets
+           # 0 pour H = 0.1; 1 pour H = 0.2; ... ; 8 pour H = 0.9
+#regr()    
+
 
 
 # Etude du skew ATM pour SPX :

@@ -72,7 +72,7 @@ def phi2(x):
 
 # Export data :
 
-#Hawkes = [simul_Prix(T,2,phi1,phi2,5) for T in [500,1000,2000,5000,10000,15000]] 
+#Hawkes = [simul_Prix(T,2,phi1,phi2,5) for T in [500,1000,2000,5000,10000,15000,20000]] 
 #d_ = {'tau500':Hawkes[0][0],'data500':Hawkes[0][1]}
 #ddf = pd.DataFrame(d_,columns = ['tau500','data500'])
 #export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes500.xlsx', index = None, header=True)

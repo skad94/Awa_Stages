@@ -91,6 +91,9 @@ def phi2(x):
 #d_ = {'tau15000':Hawkes[5][0],'data15000':Hawkes[5][1]}
 #ddf = pd.DataFrame(d_,columns = ['tau15000','data15000'])
 #export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes15000.xlsx', index = None, header=True)
+#d_ = {'tau20000':Hawkes[6][0],'data20000':Hawkes[6][1]}
+#ddf = pd.DataFrame(d_,columns = ['tau20000','data20000'])
+#export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes20000.xlsx', index = None, header=True)
 
 
 
@@ -107,7 +110,7 @@ def plot_vol_Hawkes(T):
     y = x
     y_barre = np.mean(y)
     sigm = []
-    for i in range(9,len(y)): # on prend une fenêtre glissante de 100 sauts
+    for i in range(9,len(y)): # on prend une fenêtre glissante de 10 sauts
         sigm.append((1/9)*np.sum((y[i-9:i+1] - y_barre)**2))
     sigm = np.sqrt(sigm)/np.sqrt(T)
     t = tau_[9:]

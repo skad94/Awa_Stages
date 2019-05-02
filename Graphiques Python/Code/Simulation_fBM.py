@@ -151,9 +151,11 @@ def plot_fBM3(H,T,Nmax,n):
 #os.chdir('C:\\Users\lroussel\Documents\Données Reuters') 
 #data_ = 'FTSE 100 30min'
 #df = pd.read_excel(data_ + ".xlsx", index_col=None, header=None)
-#aa = np.flip(np.array(df)[1:])
+#df = np.array(df)[1:]
+#df = [float(z) for z in df]
+#aa = np.log(np.flip(df))
 #plt.figure()
-#plt.title("FTSE 100 intraday 30min vol")
+#plt.title("FTSE 100 intraday 30min log-vol")
 #plt.plot(aa)
 #plt.show()
 

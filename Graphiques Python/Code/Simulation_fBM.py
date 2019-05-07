@@ -140,24 +140,31 @@ def plot_fBM3(H,T,Nmax,n):
 
 
 
-
-
-
-
-
-
 # Morceau de code pour plot des données de vol réalisée :
 
-#os.chdir('C:\\Users\lroussel\Documents\Données Reuters') 
-#data_ = 'FTSE 100 30min'
-#df = pd.read_excel(data_ + ".xlsx", index_col=None, header=None)
-#df = np.array(df)[1:]
-#df = [float(z) for z in df]
-#aa = np.log(np.flip(df))
-#plt.figure()
-#plt.title("FTSE 100 intraday 30min log-vol")
-#plt.plot(aa)
-#plt.show()
+def plot_log_vol():
+    os.chdir('C:\\Users\lroussel\Documents\Données Reuters') 
+    data_ = ['AXA_vol','DAX_vol','SPX_vol','US_10Y_vol','Swap_EUR3M1Y_vol','FOAT_vol','Gold_vol','WheatFuture_vol','Epex_vol']
+    H = [0.54,0.44,0.56,0.48,0.49,0.33,0.37,0.49,0.43] # Ces approximations de H ont été trouvées avec le code "Graphiques_python.py" selon la
+    k_ = len(data_)                                    # méthode habituelle (régressions linéaires)
+    df = []
+    plt.figure()
+    plt.subplots_adjust(hspace = 0.5)
+    for i in range(k_):
+        tmp_ = pd.read_excel(data_[i] + ".xlsx", index_col=None, header=None)
+        df.append(tmp_)
+        df[i] = np.array(df[i])[1:]
+        df[i] = [float(z) for z in df[i]]
+        df[i] = np.log(np.flip(df[i]))
+        j = 331 + i
+        plt.subplot(j)
+        plt.title(data_[i] + ". H = " + str(H[i]))
+        plt.plot(df[i])
+    plt.show()
+
+#plot_log_vol()
+
+
 
 
 # Exporter des trajectoires en fichier excel pour voir quel H on retrouve de manière empirique :

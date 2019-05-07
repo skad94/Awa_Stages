@@ -9,7 +9,7 @@ os.chdir('C:\\Users\lroussel\Documents\Données Reuters') # à modifier
 
 # Extraction des données :
 
-data_ = 'FTSE 100 30min'
+data_ = 'FOAT_vol'
 df = pd.read_excel(data_ + ".xlsx", index_col=None, header=None) # lit le fichier excel
 aa = np.flip(np.array(df)[1:])
 n = len(aa)

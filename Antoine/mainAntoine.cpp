@@ -5,7 +5,8 @@
 
 using namespace std;
 
-double ConversionReuters(string maturite) {//Conversion of "1Y6M" to 1.5
+double 
+ConversionReuters(string maturite) {//Conversion of "1Y6M" to 1.5
 	int i = 0;
 	string s = "";
 	double timetomaturity = 0;
@@ -38,7 +39,8 @@ double ConversionReuters(string maturite) {//Conversion of "1Y6M" to 1.5
 	return timetomaturity;
 }
 
-void ReplaceComa(string& s) {//Conversion of 1,43 to 1.43
+void
+ReplaceComa(string& s) {//Conversion of 1,43 to 1.43
 	int i = 0;
 	while (s[i] != '\0') {
 		if (s[i] == ',') {
@@ -48,7 +50,8 @@ void ReplaceComa(string& s) {//Conversion of 1,43 to 1.43
 	}
 }
 
-double Interpolation(double T, map<double, double> courbe, string convention = "linear") {//Interpolation for the yield curve from the data
+double 
+Interpolation(double T, map<double, double> courbe, string convention = "linear") {//Interpolation for the yield curve from the data
 	double t1;
 	double t2;
 	double r1;
@@ -68,7 +71,8 @@ double Interpolation(double T, map<double, double> courbe, string convention = "
 	return r2;
 }
 
-double ZC(double taux, double T, string convention = "compose", double t = 0) {//ZC Price with 2 convention T the maturity and t the date of valuation are exprimed in years
+double
+ZC(double taux, double T, string convention = "compose", double t = 0) {//ZC Price with 2 convention T the maturity and t the date of valuation are exprimed in years
 	if (convention == "compose")
 		return pow(1 / (1 + taux), T - t);
 		//return 1;
@@ -76,7 +80,8 @@ double ZC(double taux, double T, string convention = "compose", double t = 0) {/
 		return exp(-taux * (T - t));
 }
 
-map<double, double> YieldCurve(string nom) {//Get the market data from a csv - mettre en argument le fichier
+map<double, double>
+YieldCurve(string nom) {//Get the market data from a csv - mettre en argument le fichier
 	map<double, double> courbe;
 	std::ifstream data("C:/users/alepeltier/Documents/Data/"+nom+".csv", std::ios::in);
 	if (data) {
@@ -118,7 +123,8 @@ map<double, double> YieldCurve(string nom) {//Get the market data from a csv - m
 	return courbe;
 }
 
-map <double, double> SpreadCurve(string nom) {
+map <double, double>
+SpreadCurve(string nom) {
 	map <double, double> spread;
 	std::ifstream data("C:/users/alepeltier/Documents/Data/" + nom + ".csv", std::ios::in);
 	if (data) {
@@ -162,7 +168,8 @@ map <double, double> SpreadCurve(string nom) {
 	return spread;
 }
 
-double PricerIRS(double nominal, double T, map<double, double> discount, double fix_rate, double frequency) {//Price an IRS today with same rate for discount and float leg
+double
+PricerIRS(double nominal, double T, map<double, double> discount, double fix_rate, double frequency) {//Price an IRS today with same rate for discount and float leg
 	double prix=0;
 	prix = ZC(Interpolation(0,discount), 0) - ZC(Interpolation(T,discount), T);
 	for (double i = frequency; i <= T; i = i + frequency) {
@@ -171,7 +178,8 @@ double PricerIRS(double nominal, double T, map<double, double> discount, double 
 	return prix * nominal;
 }
 
-double PricerIRSBicourbe(double nominal, double T, map <double, double> discount, map <double, double> ibor, double fix_rate, double frequency) {
+double 
+PricerIRSBicourbe(double nominal, double T, map <double, double> discount, map <double, double> ibor, double fix_rate, double frequency) {
 	double prix=0;
 	for (double i = frequency; i <= T; i = i + frequency) {
 		prix += ZC(Interpolation(i, discount), i) * frequency \
@@ -180,13 +188,15 @@ double PricerIRSBicourbe(double nominal, double T, map <double, double> discount
 	return prix * nominal;
 }
 
-void Affiche(map<double, double> mymap) {//show the content of a map
+void 
+Affiche(map<double, double> mymap) {//show the content of a map
 	for (map<double, double>::iterator it = mymap.begin(); it != mymap.end(); it++) {
 		std::cout << it->first << " : " << it->second << endl;
 	}
 }
 
-map <double, double> DefaultProb(map <double, double> spread, map<double, double> discount, double R = 0.4) {
+map <double, double> 
+DefaultProb(map <double, double> spread, map<double, double> discount, double R = 0.4) {
 	map <double, double> proba_defaut;
 	proba_defaut[0] = 1;
 	double L = 1 - R;//LOSS GIVEN
@@ -226,7 +236,8 @@ map <double, double> DefaultProb(map <double, double> spread, map<double, double
 	return proba_defaut;
 }
 
-int main() {
+int
+main() {
 	map<double, double> discount = YieldCurve("CourbeOIS06.05.2019");
 	map<double, double> libor = YieldCurve("CourbeLibor06.05.2019");
 	//Affiche(discount);

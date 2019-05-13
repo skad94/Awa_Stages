@@ -5,40 +5,40 @@
 
 using namespace std;
 
-double conversion(string maturite) {//Conversion of "1Y6M" to 1.5
+double ConversionReuters(string maturite) {//Conversion of "1Y6M" to 1.5
 	int i = 0;
 	string s = "";
-	double ttm = 0;// time to maturity;
+	double timetomaturity = 0;
 	while (maturite[i] != '\0') {
 		while (int(maturite[i]) >= 48 && int(maturite[i]) <= 57) {
 			s.push_back(maturite[i]);
 			i++;
 		}
 		if (maturite[i] == 'Y') {
-			ttm += stod(s);
+			timetomaturity += stod(s);
 			s = "";
 			i++;
 		}
 		if (maturite[i] == 'M') {
-			ttm += stod(s) /12;
+			timetomaturity += stod(s) /12;
 			s = "";
 			i++;
 		}
 		if (maturite[i] == 'W') {
-			ttm += stod(s) * 7 / 360;
+			timetomaturity += stod(s) * 7 / 360;
 			s = "";
 			i++;
 		}
 		if (maturite[i] == 'D') {
-			ttm += stod(s) / 360;
+			timetomaturity += stod(s) / 360;
 			s = "";
 			i++;
 		}
 	}
-	return ttm;
+	return timetomaturity;
 }
 
-void replace_coma(string& s) {//Conversion of 1,43 to 1.43
+void ReplaceComa(string& s) {//Conversion of 1,43 to 1.43
 	int i = 0;
 	while (s[i] != '\0') {
 		if (s[i] == ',') {
@@ -48,7 +48,7 @@ void replace_coma(string& s) {//Conversion of 1,43 to 1.43
 	}
 }
 
-double interpolation(double T, map<double, double> courbe, string convention = "linear") {//Interpolation for the yield curve from the data
+double Interpolation(double T, map<double, double> courbe, string convention = "linear") {//Interpolation for the yield curve from the data
 	double t1;
 	double t2;
 	double r1;
@@ -76,7 +76,7 @@ double ZC(double taux, double T, string convention = "compose", double t = 0) {/
 		return exp(-taux * (T - t));
 }
 
-map<double, double> courbe_de_taux(string nom) {//Get the market data from a csv - mettre en argument le fichier
+map<double, double> YieldCurve(string nom) {//Get the market data from a csv - mettre en argument le fichier
 	map<double, double> courbe;
 	std::ifstream data("C:/users/alepeltier/Documents/Data/"+nom+".csv", std::ios::in);
 	if (data) {
@@ -105,20 +105,20 @@ map<double, double> courbe_de_taux(string nom) {//Get the market data from a csv
 				taux.push_back(contenu[i]);
 				i++;
 			}
-			replace_coma(taux);
-			courbe[conversion(maturite)] = stod(taux)/100;
+			ReplaceComa(taux);
+			courbe[ConversionReuters(maturite)] = stod(taux)/100;
 			maturite = "";
 			taux = "";
 		}
 		data.close();
 	}
 	else {
-		std::cout << "Impossible d'ouvrir le fichier !" << std::endl;
+		std::cout << "Can't open the file !" << std::endl;
 	}
 	return courbe;
 }
 
-map <double, double> courbe_de_spread(string nom) {
+map <double, double> SpreadCurve(string nom) {
 	map <double, double> spread;
 	std::ifstream data("C:/users/alepeltier/Documents/Data/" + nom + ".csv", std::ios::in);
 	if (data) {
@@ -149,57 +149,52 @@ map <double, double> courbe_de_spread(string nom) {
 				i++;
 			}
 			cout << sp << endl;
-			replace_coma(sp);
-			spread[conversion(maturite)] = stod(sp)/10000;
+			ReplaceComa(sp);
+			spread[ConversionReuters(maturite)] = stod(sp)/10000;
 			maturite = "";
 			sp = "";
 		}
 		data.close();
 	}
 	else {
-		cout << "Impossible d'ouvrir le fichier !" << endl;
+		cout << "Can't open the file !" << endl;
 	}
 	return spread;
 }
 
-double Pricer_IRS(double nominal, double T, map<double, double> courbe, double taux_fixe, double frequence) {//Price an IRS today with same rate for discount and float leg
+double PricerIRS(double nominal, double T, map<double, double> discount, double fix_rate, double frequency) {//Price an IRS today with same rate for discount and float leg
 	double prix=0;
-	prix = ZC(interpolation(0,courbe), 0) - ZC(interpolation(T,courbe), T);
-	for (double i = frequence; i <= T; i = i + frequence) {
-		prix -= ZC(interpolation(i, courbe), i) * frequence * taux_fixe;
+	prix = ZC(Interpolation(0,discount), 0) - ZC(Interpolation(T,discount), T);
+	for (double i = frequency; i <= T; i = i + frequency) {
+		prix -= ZC(Interpolation(i, discount), i) * frequency * fix_rate;
 	}
 	return prix * nominal;
 }
 
-double Pricer_IRS_bicourbe(double nominal, double T, map <double, double> discount, map <double, double> ibor, double taux_fixe, double frequence) {
+double PricerIRSBicourbe(double nominal, double T, map <double, double> discount, map <double, double> ibor, double fix_rate, double frequency) {
 	double prix=0;
-	for (double i = frequence; i <= T; i = i + frequence) {
-		prix += ZC(interpolation(i, discount), i) * frequence \
-			* ((ZC(interpolation(i - frequence, ibor), i - frequence) / ZC(interpolation(i, ibor), i) - 1) / frequence - taux_fixe);
+	for (double i = frequency; i <= T; i = i + frequency) {
+		prix += ZC(Interpolation(i, discount), i) * frequency \
+			* ((ZC(Interpolation(i - frequency, ibor), i - frequency) / ZC(Interpolation(i, ibor), i) - 1) / frequency - fix_rate);
 	}
 	return prix * nominal;
 }
 
-void affiche(map<double, double> mymap) {//show the content of a map
+void Affiche(map<double, double> mymap) {//show the content of a map
 	for (map<double, double>::iterator it = mymap.begin(); it != mymap.end(); it++) {
 		std::cout << it->first << " : " << it->second << endl;
 	}
 }
 
-map <double, double> proba_defaut(map <double, double> spread, map<double, double> discount, double R = 0.4) {
+map <double, double> DefaultProb(map <double, double> spread, map<double, double> discount, double R = 0.4) {
 	map <double, double> proba_defaut;
 	proba_defaut[0] = 1;
-	double L = 1 - R;
+	double L = 1 - R;//LOSS GIVEN
 	int i = 0;
 	for (map<double, double>::iterator it = spread.begin(); it != spread.end(); it++) {
 		double proba = 0;
 		if (proba_defaut.size() == 1) {
 			proba = L / (L + it->first* it->second);
-			/*double accru = 40.0 / 360 * it->second;
-			cout << accru << endl;
-			accru = accru / (ZC(interpolation(it->first, discount), it->first) * (it->first * it->second + L));
-			cout << accru << endl;
-			proba = proba - accru;*/
 		}
 		else {
 			map<double, double>::iterator it2 = proba_defaut.begin();
@@ -208,20 +203,20 @@ map <double, double> proba_defaut(map <double, double> spread, map<double, doubl
 			for (it2; it2 != proba_defaut.end(); it2++) {
 				it4 = it2;
 				it4--;
-				proba += ZC(interpolation(it2->first, discount), it2->first) * (L * it4->second - it2->second * (L + (it2->first-it4->first) * it->second));
+				proba += ZC(Interpolation(it2->first, discount), it2->first) * (L * it4->second - it2->second * (L + (it2->first-it4->first) * it->second));
 				it4++;
 				if (i == 30) {
 					return proba_defaut;
 				}
 			}
-			proba = proba / (ZC(interpolation(it->first, discount), it->first) * (L + (it->first-it4->first) * it->second));
+			proba = proba / (ZC(Interpolation(it->first, discount), it->first) * (L + (it->first-it4->first) * it->second));
 			map<double, double>::iterator it3 = proba_defaut.end();
 			it3--;
 			proba += L * it3->second / (L + (it->first-it4->first) * it->second);
 		}
 		i++;
 		double accru = 40.0 / 360 * it->second;
-		accru = accru / (ZC(interpolation(it->first, discount), it->first) * (it->first * it->second + L));
+		accru = accru / (ZC(Interpolation(it->first, discount), it->first) * (it->first * it->second + L));
 		proba = proba - accru;
 		proba_defaut[it->first] = proba;
 	}
@@ -232,19 +227,19 @@ map <double, double> proba_defaut(map <double, double> spread, map<double, doubl
 }
 
 int main() {
-	map<double, double> discount = courbe_de_taux("CourbeOIS06.05.2019");
-	map<double, double> libor = courbe_de_taux("CourbeLibor06.05.2019");
-	//affiche(discount);
-	double taux_fixe = (2.0 / 100);
-	//double prix = Pricer_IRS(1, 5, discount, taux_fixe, 0.5);
+	map<double, double> discount = YieldCurve("CourbeOIS06.05.2019");
+	map<double, double> libor = YieldCurve("CourbeLibor06.05.2019");
+	//Affiche(discount);
+	double fix_rate = (2.0 / 100);
+	//double prix = PricerIRS(1, 5, discount, fix_rate, 0.5);
 	//cout << "Le prix avec le mono-courbe est: " << prix << " euros" << endl;
-	//double prix2 = Pricer_IRS_bicourbe(1, 5, discount, discount, taux_fixe, 0.5);
+	//double prix2 = PricerIRSBicourbe(1, 5, discount, discount, fix_rate, 0.5);
 	//cout << "Le prix avec le bi-courbe est " << prix2 << " euros" << endl;
-	map<double, double> spread = courbe_de_spread("CDSSpreadV");
-	affiche(spread);
-	map<double, double> prob = proba_defaut(spread, discount);
-	//affiche(spread);
-	affiche(prob);
+	map<double, double> spread = SpreadCurve("CDSSpreadV");
+	Affiche(spread);
+	map<double, double> prob = DefaultProb(spread, discount);
+	//Affiche(spread);
+	Affiche(prob);
 	/*map<double, double>::iterator it = spread.begin();
 	it++;
 	for (it; it != spread.end(); it++) {

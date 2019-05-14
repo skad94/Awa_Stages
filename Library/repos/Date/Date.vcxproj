@@ -124,9 +124,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="cDate.hh" />
+    <ClInclude Include="cPeriod.hh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cDate.cpp" />
+    <ClCompile Include="cPeriod.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

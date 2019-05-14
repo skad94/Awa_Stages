@@ -7,7 +7,7 @@ private:
 	int _year;
 public:
 	cDate();
-	cDate(int day, int month, int year);
+	cDate(const int& day, const int& month, const int& year);
 	cDate(const cDate& d);
 	~cDate();
 	void ShowDate();

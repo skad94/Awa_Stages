@@ -7,8 +7,7 @@ private:
 	int _yearConvention;
 public:
 	cPeriod();
-	cPeriod(int day, int month, int year, int monthConvention, int yearConvention);
+	cPeriod(const int& day, const int& month, const int& year, const int& monthConvention, const int& yearConvention);
 	cPeriod(const cPeriod& period);
-	~cPeriod();
 
 };

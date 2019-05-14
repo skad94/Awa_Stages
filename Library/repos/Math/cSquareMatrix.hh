@@ -3,18 +3,18 @@
 #include <iostream>
 using namespace std;
 
-class cSquareMatrix {
+class cSquareMatrix 
+{
     private:
     int _size;
     vector<double> _data;
 
 
     public:
-    cSquareMatrix(int size);
+    cSquareMatrix(const int& size);
     cSquareMatrix(const cSquareMatrix& m);
-    ~cSquareMatrix();
-    double& operator()(int i, int j);
-    double operator()(int i, int j) const;
+    double& operator()(const int& i, const int& j);
+    double operator()(const int& i, const int& j) const;
     int GetSize() const;
 };
 

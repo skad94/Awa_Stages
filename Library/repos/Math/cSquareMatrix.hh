@@ -8,6 +8,7 @@ class cSquareMatrix {
     int _size;
     vector<double> _data;
 
+
     public:
     cSquareMatrix(int size);
     cSquareMatrix(const cSquareMatrix& m);

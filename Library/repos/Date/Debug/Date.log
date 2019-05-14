@@ -1,0 +1,3 @@
+﻿  cDate.cpp
+MSVCRTD.lib(exe_main.obj) : error LNK2019: symbole externe non rÚsolu _main rÚfÚrencÚ dans la fonction "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
+C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Debug\Date.exe : fatal error LNK1120: 1 externes non rÚsolus

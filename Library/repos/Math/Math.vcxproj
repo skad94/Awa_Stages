@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{8E4F5017-5AD5-4A7E-8184-A497A0A34F19}</ProjectGuid>
+    <ProjectGuid>{1BDF8AD8-036F-4256-BFA5-6BC4A170A1A5}</ProjectGuid>
     <RootNamespace>Math</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -81,7 +81,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -123,11 +123,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Desktop\Code_C++\Code\cSquareMatrix.cpp" />
-    <ClCompile Include="..\..\..\..\..\Desktop\Code_C++\Code\main.cpp" />
+    <ClInclude Include="..\..\..\..\..\..\Desktop\Code_C++\Code\cSquareMatrix.hh" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Desktop\Code_C++\Code\cSquareMatrix.hh" />
+    <ClCompile Include="..\..\..\..\..\..\Desktop\Code_C++\Code\cSquareMatrix.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Desktop\Code_C++\Code\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

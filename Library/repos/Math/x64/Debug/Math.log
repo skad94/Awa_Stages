@@ -1,3 +1,0 @@
-﻿  cSquareMatrix.cpp
-C:\Users\lroussel\Desktop\Code_C++\Code\cSquareMatrix.cpp(68): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
-  Math.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\x64\Debug\Math.exe

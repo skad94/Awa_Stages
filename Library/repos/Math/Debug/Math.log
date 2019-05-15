@@ -1,5 +1,6 @@
 ﻿  cSquareMatrix.cpp
-C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Math\cSquareMatrix.cpp(42): warning C4018: '<' : incompatibilité signed/unsigned
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Math\cSquareMatrix.cpp(45): warning C4018: '<' : incompatibilité signed/unsigned
   main.cpp
   Génération de code en cours...
-  Math.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Debug\Math.exe
+  LINK : C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Debug\Math.exe introuvable ou non généré par la dernière édition de liens incrémentielle ; édition de liens complète en cours
+  Math.vcxproj -> C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Debug\Math.exe

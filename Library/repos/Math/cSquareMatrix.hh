@@ -18,6 +18,7 @@ class cSquareMatrix
     int GetSize() const;
 };
 
+
 void ShowMatrix(const cSquareMatrix& m);
 void ShowVector(const vector<double>& v);
 cSquareMatrix operator*(const cSquareMatrix& m1, const cSquareMatrix& m2);

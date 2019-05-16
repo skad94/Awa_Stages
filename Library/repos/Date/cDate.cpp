@@ -1,4 +1,5 @@
 #include "cDate.hh"
+#include "cPeriod.hh"
 #include <iostream>
 using namespace std;
 

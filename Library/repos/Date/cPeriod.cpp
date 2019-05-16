@@ -7,7 +7,7 @@ cPeriod::cPeriod(const int& day,
 	             const int& year,
 	             const int& monthConvention, //eg 30
 	             const int& yearConvention) // eg 360
-	: cDate(day, month, year), _monthConvention(monthConvention), 
+	: cDate(day, month, year), _monthConvention(monthConvention), //
 	  _yearConvention(yearConvention) {}
 
 cPeriod::cPeriod(const cPeriod& period)

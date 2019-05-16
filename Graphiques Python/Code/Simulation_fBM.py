@@ -144,7 +144,7 @@ def plot_fBM3(H,T,Nmax,n):
 
 def plot_log_vol():
     os.chdir('C:\\Users\lroussel\Documents\Données Reuters') 
-    data_ = ['AXA_vol','DAX_vol','SPX_vol','US_10Y_vol','Swap_EUR3M1Y_vol','FOAT_vol','Gold_vol','WheatFuture_vol','Epex_vol']
+    data_ = ['AXA_vol','DAX_vol','SPX_vol','US_10Y_vol','Swap_EUR3M1Y_vol','FOAT_vol','Gold_vol','CornFuture_vol','PowerFr_vol']
     H = [0.54,0.44,0.56,0.48,0.49,0.33,0.37,0.49,0.43] # Ces approximations de H ont été trouvées avec le code "Graphiques_python.py" selon la
     k_ = len(data_)                                    # méthode habituelle (régressions linéaires)
     df = []
@@ -162,7 +162,7 @@ def plot_log_vol():
         plt.plot(df[i])
     plt.show()
 
-#plot_log_vol()
+plot_log_vol()
 
 
 

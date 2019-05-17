@@ -2,7 +2,6 @@
 
 
 int main() {
-    cout << "hellooo" << endl;
     cSquareMatrix m1(3);
     m1(0,0) = 4;
     m1(0,1) = 2;
@@ -27,9 +26,16 @@ int main() {
     v[0] = 1;
     v[1] = 0;
     v[2] = -1;
-    //ShowMatrix(m2*m1);
-    //ShowVector(m1*v);
-    cSquareMatrix L = Cholesky(m1);
-    cSquareMatrix LT = Transpose(L);
-    ShowMatrix(L*LT); // == m1
+    (m2*m1).ShowMatrix();
+	cout << endl;
+	cSquareMatrix L = m1.Cholesky();
+	L.ShowMatrix();
+	cout << endl;
+    cSquareMatrix LT = L.Transpose();
+	LT.ShowMatrix();
+	cout << endl;
+    (L*LT).ShowMatrix(); // == m1
+	cout << endl;
+	m2 = L;
+	m2.ShowMatrix();
 }

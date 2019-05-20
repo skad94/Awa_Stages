@@ -1,8 +1,8 @@
 #include "cSquareMatrix.hh"
 
-
-int main() {
-    cSquareMatrix m1(3);
+int main() 
+{
+    /*cSquareMatrix m1(3);
     m1(0,0) = 4;
     m1(0,1) = 2;
     m1(0,2) = 1;
@@ -37,5 +37,7 @@ int main() {
     (L*LT).ShowMatrix(); // == m1
 	cout << endl;
 	m2 = L;
-	m2.ShowMatrix();
+	m2.ShowMatrix();*/
+	
+
 }

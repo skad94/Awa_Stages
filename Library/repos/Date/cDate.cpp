@@ -108,3 +108,29 @@ cDate::operator+(const cPeriod& period)
 	res += period;
 	return res;
 }
+
+cDate::bool operator<(const Date& d1) const {
+	if (annee < d1.annee) {
+		return true;
+	}
+	if (d1.annee < annee) {
+		return false;
+	}
+	else {
+		if (mois < d1.mois) {
+			return true;
+		}
+		if (d1.mois < mois) {
+			return false;
+		}
+		else {
+			if (jour < d1.jour) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+}
+

@@ -1,6 +1,7 @@
 #ifndef CDATE_HH
 #define CDATE_HH
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class cPeriod;
@@ -22,6 +23,7 @@ class cDate
 		cDate operator-(const cPeriod& period);
 		cDate& operator+=(const cPeriod& period);
 		cDate operator+(const cPeriod& period);
+		bool operator<(const cDate& d1) const;
 };
 
 #endif

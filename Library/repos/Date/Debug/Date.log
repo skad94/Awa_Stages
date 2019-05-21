@@ -1,2 +1,21 @@
-﻿  main.cpp
-  Date.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Debug\Date.exe
+﻿  cDate.cpp
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(112): error C2589: 'bool': illegal token on right side of '::'
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(112): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(112): error C2143: syntax error: missing ',' before '&'
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(112): error C2270: '<': modifiers not allowed on nonmember functions
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(112): error C2803: 'operator <' must have at least one formal parameter of class type
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(112): error C2805: binary 'operator <' has too few parameters
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(113): error C2065: 'annee': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(113): error C2065: 'd1': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(116): error C2065: 'd1': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(116): error C2065: 'annee': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(120): error C2065: 'mois': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(120): error C2065: 'd1': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(123): error C2065: 'd1': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(123): error C2065: 'mois': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(127): error C2065: 'jour': undeclared identifier
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\cDate.cpp(127): error C2065: 'd1': undeclared identifier
+  cPeriod.cpp
+  main.cpp
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\main.cpp(11): error C2059: syntax error: '}'
+  Generating Code...

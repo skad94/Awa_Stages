@@ -1,4 +1,6 @@
 #include "cSquareMatrix.hh"
+#include <random>
+#include <ctime>
 
 int main() 
 {
@@ -39,5 +41,12 @@ int main()
 	m2 = L;
 	m2.ShowMatrix();*/
 	
+	default_random_engine generator;
+	generator.seed(time(NULL));
+	normal_distribution<double> distribution(0,1);
+	vector<double> v(10, 0);
+	for (int i = 0; i < 10; i++)
+		v[i] = distribution(generator);
+	ShowVector(v);
 
 }

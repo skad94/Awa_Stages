@@ -66,11 +66,11 @@ cSquareMatrix::operator*=(const cSquareMatrix& m)
 	return *this;
 }
 
-cSquareMatrix 
+unique_ptr<cSquareMatrix>
 cSquareMatrix::operator*(const cSquareMatrix& m) const
 {
-	cSquareMatrix res(*this);
-	res *= m;
+	unique_ptr<cSquareMatrix> res(new cSquareMatrix(*this));
+	*res *= m;
 	return res;
 }
 
@@ -91,24 +91,24 @@ cSquareMatrix::operator*(const vector<double>& v) const
 	return res;
 }
 
-cSquareMatrix 
+unique_ptr<cSquareMatrix>
 cSquareMatrix::Transpose()
 {//Matrix transposition
-	cSquareMatrix res(_size);
+	unique_ptr<cSquareMatrix> res(new cSquareMatrix(_size));
 	for (int i = 0; i < _size; i++)
 	{
 		for (int j = 0; j < _size; j++)
 		{
-			res(i, j) = operator()(j, i);
+			(*res)(i, j) = operator()(j, i);
 		}
 	}
 	return res;
 }
 
-cSquareMatrix 
+unique_ptr<cSquareMatrix>
 cSquareMatrix::Cholesky()
 {//Cholesky decomposition
-	cSquareMatrix L(_size);
+	unique_ptr<cSquareMatrix> L(new cSquareMatrix(_size));
 	double s;
 	for (int i = 0; i < _size; i++)
 	{
@@ -117,10 +117,10 @@ cSquareMatrix::Cholesky()
 			s = 0;
 			for (int k = 0; k < i; k++)
 			{
-				s += L(i, k) * L(j, k);
+				s += (*L)(i, k) * (*L)(j, k);
 			}
-			if (i == j) L(i, j) = sqrt(operator()(i, j) - s);
-			else L(j, i) = (operator()(i, j) - s) / L(i, i);
+			if (i == j) (*L)(i, j) = sqrt(operator()(i, j) - s);
+			else (*L)(j, i) = (operator()(i, j) - s) / (*L)(i, i);
 		}
 	}
 	return L;

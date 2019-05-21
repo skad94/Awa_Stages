@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cSquareMatrix.hh" />
+    <ClInclude Include="Functions.hh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cSquareMatrix.cpp" />
+    <ClCompile Include="Functions.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

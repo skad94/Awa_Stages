@@ -18,10 +18,10 @@ class cSquareMatrix
     int GetSize() const;
 	void ShowMatrix() const;
 	cSquareMatrix& operator*=(const cSquareMatrix& m);
-	cSquareMatrix operator*(const cSquareMatrix& m) const;
+	unique_ptr<cSquareMatrix> operator*(const cSquareMatrix& m) const;
 	vector<double> operator*(const vector<double>& v) const;
-	cSquareMatrix Transpose();
-	cSquareMatrix Cholesky();
+	unique_ptr<cSquareMatrix> Transpose();
+	unique_ptr<cSquareMatrix> Cholesky();
 };
 
 void ShowVector(const vector<double>& v);

@@ -1,2 +1,3 @@
 ﻿  main.cpp
+C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Math\main.cpp(45): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Math.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Debug\Math.exe

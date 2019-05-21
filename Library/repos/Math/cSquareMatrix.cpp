@@ -74,10 +74,10 @@ cSquareMatrix::operator*(const cSquareMatrix& m) const
 	return res;
 }
 
-vector<double> 
+unique_ptr<vector<double>> 
 cSquareMatrix::operator*(const vector<double>& v) const
 {//Product of matrix and vector
-	vector<double> res(_size, 0);
+	unique_ptr<vector<double>> res(new vector<double>(_size, 0));
 	double s;
 	for (int i = 0; i < _size; i++)
 	{
@@ -86,13 +86,13 @@ cSquareMatrix::operator*(const vector<double>& v) const
 		{
 			s += operator()(i, k) * v[k];
 		}
-		res[i] = s;
+		(*res)[i] = s;
 	}
 	return res;
 }
 
 unique_ptr<cSquareMatrix>
-cSquareMatrix::Transpose()
+cSquareMatrix::Transpose() const
 {//Matrix transposition
 	unique_ptr<cSquareMatrix> res(new cSquareMatrix(_size));
 	for (int i = 0; i < _size; i++)
@@ -106,7 +106,7 @@ cSquareMatrix::Transpose()
 }
 
 unique_ptr<cSquareMatrix>
-cSquareMatrix::Cholesky()
+cSquareMatrix::Cholesky() const
 {//Cholesky decomposition
 	unique_ptr<cSquareMatrix> L(new cSquareMatrix(_size));
 	double s;

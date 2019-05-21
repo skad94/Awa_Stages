@@ -19,9 +19,9 @@ class cSquareMatrix
 	void ShowMatrix() const;
 	cSquareMatrix& operator*=(const cSquareMatrix& m);
 	unique_ptr<cSquareMatrix> operator*(const cSquareMatrix& m) const;
-	vector<double> operator*(const vector<double>& v) const;
-	unique_ptr<cSquareMatrix> Transpose();
-	unique_ptr<cSquareMatrix> Cholesky();
+	unique_ptr<vector<double>> operator*(const vector<double>& v) const;
+	unique_ptr<cSquareMatrix> Transpose() const;
+	unique_ptr<cSquareMatrix> Cholesky() const;
 };
 
 void ShowVector(const vector<double>& v);

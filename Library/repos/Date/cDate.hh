@@ -17,6 +17,9 @@ class cDate
 		cDate();
 		cDate(const int& day, const int& month, const int& year);
 		cDate(const cDate& d);
+		int GetDay() const;
+		int GetMonth() const;
+		int GetYear() const;
 		void Show();
 		virtual bool IsValid() const;
 		void SetAsInvalid();

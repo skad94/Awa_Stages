@@ -1,3 +1,6 @@
+#ifndef CSQUAREMATRIX_HH
+#define CSQUAREMATRIX_HH
+
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -25,3 +28,5 @@ class cSquareMatrix
 };
 
 void ShowVector(const vector<double>& v);
+
+#endif

@@ -10,6 +10,24 @@ cDate::cDate(const int& day, const int& month, const int& year)
 cDate::cDate(const cDate& d) 
 	: _day(d._day), _month(d._month), _year(d._year) {}
 
+int 
+cDate::GetDay() const
+{
+	return _day;
+}
+
+int
+cDate::GetMonth() const
+{
+	return _month;
+}
+
+int
+cDate::GetYear() const
+{
+	return _year;
+}
+
 void 
 cDate::Show()
 {

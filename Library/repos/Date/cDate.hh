@@ -9,7 +9,7 @@ class cPeriod;
 
 class cDate 
 {
-	private:
+	protected:
 		int _day;
 		int _month;
 		int _year;
@@ -17,8 +17,8 @@ class cDate
 		cDate();
 		cDate(const int& day, const int& month, const int& year);
 		cDate(const cDate& d);
-		void ShowDate();
-		bool IsValid() const;
+		void Show();
+		virtual bool IsValid() const;
 		void SetAsInvalid();
 		static bool IsLeapYear(const int& year);
 		cDate& operator-=(const cPeriod& period);

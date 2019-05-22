@@ -12,8 +12,10 @@ private:
 
 public:
 	cPeriod();
-	cPeriod(const cDate& date, const Convention& convention);
+	cPeriod(const int& day, const int& month, const int& year, const Convention& convention);
 	cPeriod(const cPeriod& period);
+	bool IsValid() const override;
+
 };
 
 #endif

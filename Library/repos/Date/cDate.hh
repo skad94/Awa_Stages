@@ -25,7 +25,7 @@ class cDate
 		cDate operator-(const cPeriod& period) const;
 		cDate& operator+=(const cPeriod& period);
 		cDate operator+(const cPeriod& period) const;
-		//bool operator<(const cDate& d1) const;
+		bool operator<(const cDate& d1);
 };
 
 #endif

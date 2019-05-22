@@ -145,24 +145,24 @@ cDate::operator+(const cPeriod& period) const
 	return res;
 }
 
-/*bool 
-cDate::operator<(const Date& d1) const 
+bool
+cDate::operator<(const cDate& d1)
 {
-	if (annee < d1.annee) {
+	if (_year < d1._year) {
 		return true;
 	}
-	if (d1.annee < annee) {
+	if (d1._year < _year) {
 		return false;
 	}
 	else {
-		if (mois < d1.mois) {
+		if (_month < d1._month) {
 			return true;
 		}
-		if (d1.mois < mois) {
+		if (d1._month < _month) {
 			return false;
 		}
 		else {
-			if (jour < d1.jour) {
+			if (_day < d1._day) {
 				return true;
 			}
 			else {
@@ -170,5 +170,6 @@ cDate::operator<(const Date& d1) const
 			}
 		}
 	}
-}*/
+}
+
 

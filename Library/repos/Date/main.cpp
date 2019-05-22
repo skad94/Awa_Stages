@@ -10,14 +10,6 @@ Schedule(cDate& date, const cPeriod& maturity, const cPeriod& freq)
 	while 
 }*/
 
-int main() 
+int main()
 {
-	cDate d(1, 2, 1959);
-	cDate d2(30, 0, 9);
-	cPeriod p(30, 0, 9, 30, 360);
-	(d -= p).ShowDate();
-	cDate tempo = d+p;
-	tempo.ShowDate();
-
-	return 0;
 }

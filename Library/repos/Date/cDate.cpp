@@ -109,7 +109,9 @@ cDate::operator+(const cPeriod& period)
 	return res;
 }
 
-cDate::bool operator<(const Date& d1) const {
+bool 
+cDate::operator<(const Date& d1) const 
+{
 	if (annee < d1.annee) {
 		return true;
 	}

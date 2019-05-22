@@ -3,19 +3,17 @@
 
 #include "cDate.hh"
 
+enum Convention { conv_30_360, conv_30_365, conv_ACT_ACT };
+
 class cPeriod : public cDate
 {
 private:
-	int _monthConvention; //eg 30
-	int _yearConvention; //eg 360
-	//if ACT convention then 0, TODO
+	Convention _convention;
+
 public:
 	cPeriod();
-	cPeriod(const int& day, const int& month, const int& year,
-		const int& monthConvention, const int& yearConvention);
+	cPeriod(const cDate& date, const Convention& convention);
 	cPeriod(const cPeriod& period);
-	int GetMonthConvention() const;
-	int GetYearConvention() const;
 };
 
 #endif

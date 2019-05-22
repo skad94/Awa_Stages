@@ -2,6 +2,7 @@
 #define CDATE_HH
 #include <iostream>
 #include <vector>
+#include <string>
 using namespace std;
 
 class cPeriod;
@@ -16,14 +17,15 @@ class cDate
 		cDate();
 		cDate(const int& day, const int& month, const int& year);
 		cDate(const cDate& d);
-		~cDate();
 		void ShowDate();
-		static bool LeapYear(const int& year);
+		bool IsValid() const;
+		void SetAsInvalid();
+		static bool IsLeapYear(const int& year);
 		cDate& operator-=(const cPeriod& period);
-		cDate operator-(const cPeriod& period);
+		cDate operator-(const cPeriod& period) const;
 		cDate& operator+=(const cPeriod& period);
-		cDate operator+(const cPeriod& period);
-		bool operator<(const cDate& d1) const;
+		cDate operator+(const cPeriod& period) const;
+		//bool operator<(const cDate& d1) const;
 };
 
 #endif

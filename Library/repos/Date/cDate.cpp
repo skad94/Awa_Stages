@@ -2,15 +2,25 @@
 #include "cPeriod.hh"
 
 cDate::cDate() 
-	:_day(1), _month(1), _year(1900) {}
+	:_day(0), _month(0), _year(0) {}
 
 cDate::cDate(const int& day, const int& month, const int& year)
-	: _day(day), _month(month), _year(year) {}
+	: _day(day), _month(month), _year(year) 
+{
+	if (!IsValid()) 
+	{
+		SetAsInvalid();
+	}
+}
 
 cDate::cDate(const cDate& d) 
-	: _day(d._day), _month(d._month), _year(d._year) {}
-
-cDate::~cDate() {}
+	: _day(d._day), _month(d._month), _year(d._year) 
+{
+	if (!IsValid())
+	{
+		SetAsInvalid();
+	}
+}
 
 void 
 cDate::ShowDate()
@@ -19,7 +29,33 @@ cDate::ShowDate()
 }
 
 bool 
-cDate::LeapYear(const int& year)
+cDate::IsValid() const
+{//Checking whether the date is valid. Values can be 0 since the date can be a period.
+	if (0 <= _month && _month <= 12)
+	{
+		if (_month == 4 || _month == 6 || _month == 9 || _month == 11) //Months with 30 days
+			return (0 <= _day && _day <= 30);
+		else if (_month == 2) //February
+			if (IsLeapYear(_year))
+				return (0 <= _day && _day <= 29);
+			else
+				return (0 <= _day && _day <= 28);
+		else //Months with 31 days or a period with _month = 0
+			return (0 <= _day && _day <= 31);
+	}
+	return 0;
+}
+
+void 
+cDate::SetAsInvalid()
+{
+	_day = 0;
+	_month = 0;
+	_year = 0;
+}
+
+bool 
+cDate::IsLeapYear(const int& year)
 {//1 if this is a leap year, else 0
 	return (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0));
 }
@@ -43,7 +79,7 @@ cDate::operator-=(const cPeriod& period)
 		if (_month == 4 || _month == 6 || _month == 9 || _month == 11)
 			_day = dayDiff + 30;
 		else if (_month == 2)
-			if (LeapYear(_year))
+			if (IsLeapYear(_year))
 				_day = dayDiff + 29;
 			else
 				_day = dayDiff + 28;
@@ -56,7 +92,7 @@ cDate::operator-=(const cPeriod& period)
 }
 
 cDate 
-cDate::operator-(const cPeriod& period)
+cDate::operator-(const cPeriod& period) const
 {
 	cDate res(*this);
 	res -= period;
@@ -81,12 +117,12 @@ cDate::operator+=(const cPeriod& period)
 		_month += 1;
 		_day = dayAdd - 30;
 	}
-	else if (_month == 2 && (LeapYear(_year) && dayAdd > 29))
+	else if (_month == 2 && (IsLeapYear(_year) && dayAdd > 29))
 	{
 		_month += 1;
 		_day = dayAdd - 29;
 	}
-	else if (_month == 2 && (!LeapYear(_year) && dayAdd > 28))
+	else if (_month == 2 && (!IsLeapYear(_year) && dayAdd > 28))
 	{
 		_month += 1;
 		_day = dayAdd - 28;
@@ -102,14 +138,16 @@ cDate::operator+=(const cPeriod& period)
 }
 
 cDate
-cDate::operator+(const cPeriod& period)
+cDate::operator+(const cPeriod& period) const
 {
 	cDate res(*this);
 	res += period;
 	return res;
 }
 
-cDate::bool operator<(const Date& d1) const {
+/*bool 
+cDate::operator<(const Date& d1) const 
+{
 	if (annee < d1.annee) {
 		return true;
 	}
@@ -132,5 +170,5 @@ cDate::bool operator<(const Date& d1) const {
 			}
 		}
 	}
-}
+}*/
 

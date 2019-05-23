@@ -1,6 +1,4 @@
-#include "cSquareMatrix.hh"
-#include <random>
-#include <ctime>
+#include "Functions.hh"
 
 int main() 
 {
@@ -41,12 +39,9 @@ int main()
 	m2 = L;
 	m2.ShowMatrix();*/
 	
-	default_random_engine generator;
-	generator.seed(time(NULL));
-	normal_distribution<double> distribution(0,1);
-	vector<double> v(10, 0);
-	for (int i = 0; i < 10; i++)
-		v[i] = distribution(generator);
-	ShowVector(v);
+	//unique_ptr<vector<double>> v(SamplePathFBM_Cholesky(3, 100, 0.3));
+	//ShowVector(*v);
+	unique_ptr<vector<double>> v1(SamplePathFBM_KL(3, 1000, 0.8, 50));
+	ShowVector(*v1);
 
 }

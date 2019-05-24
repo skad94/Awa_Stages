@@ -1,2 +1,9 @@
-﻿  main.cpp
-  Math.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Debug\Math.exe
+﻿  Functions.cpp
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Math\Functions.cpp(32): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Math\Functions.cpp(99): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  cSquareMatrix.cpp
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Math\cSquareMatrix.cpp(132): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+  Generating Code...
+  LINK : C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Debug\Math.exe not found or not built by the last incremental link; performing full link
+  Math.vcxproj -> C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Debug\Math.exe

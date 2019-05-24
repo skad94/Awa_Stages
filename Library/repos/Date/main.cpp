@@ -1,18 +1,11 @@
 #include "cDate.hh"
 #include "cPeriod.hh"
+#include "Functions.hh"
 
-/*vector<cDate>
-Schedule(cDate& date, const cPeriod& maturity, const cPeriod& freq)
-{
-	vector <cDate> schedule;
-	cDate tempo = date + maturity;
-	schedule.push_back(tempo);
-	while 
-}*/
 
 int main()
 {
-	cDate d1(1, 1, 1900);
+	/*cDate d1(1, 1, 1900);
 	d1.Show();
 	cPeriod p1(1, 3, 119, conv_30_360);
 	p1.Show();
@@ -25,5 +18,10 @@ int main()
 	(d1 - p1).Show();
 	d1 -= p1;
 	d1 += p2;
-	d1.Show();
+	d1.Show();*/
+	cDate start(18, 6, 2019);
+	cPeriod maturity(0, 0, 5, {conv_30_360});
+	cPeriod freq(0, 6, 0, { conv_30_360 });
+	vector <cDate> schedule = Schedule(start,maturity,freq);
+	ShowSchedule(schedule);
 }

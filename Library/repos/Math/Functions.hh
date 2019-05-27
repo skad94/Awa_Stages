@@ -2,6 +2,10 @@
 #define FUNCTIONS_HH
 
 #include "cSquareMatrix.hh"
+#include <cmath>
+#include <random>
+#include <ctime>
+#include <fstream>
 
 double Integrate(double(*f)(double, double, int, double), double H,
 	double T, int k, double a, double b);
@@ -23,5 +27,7 @@ double Coeff_C0_KL(double H, double T);
 double Coeff_Ck_KL(double H, double T, int k);
 
 unique_ptr<vector<double>> SamplePathFBM_KL(double maturity, int n, double H, int N);
+
+void ExportData(const unique_ptr<vector<double>>& data, string fileName);
 
 #endif

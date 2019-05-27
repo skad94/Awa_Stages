@@ -1,8 +1,5 @@
 #define _USE_MATH_DEFINES 
 #include "Functions.hh"
-#include <cmath>
-#include <random>
-#include <ctime>
 
 double 
 Integrate(double(*f)(double, double, int, double), double H, double T, int k, double a, double b) 
@@ -29,7 +26,7 @@ SamplePathFBM_Cholesky(double maturity, int n, double H)
 {//Simulation of a fractional brownian motion sample path with exponent H by Cholesky decomposition
 	double dt = maturity / n;
 	default_random_engine generator;
-	generator.seed(time(NULL));
+	generator.seed((unsigned int) time(NULL));
 	normal_distribution<double> distribution(0, 1);
 	vector<double> gaussianSample(n, 0);
 	cSquareMatrix covarianceMatrix(n);
@@ -96,7 +93,7 @@ SamplePathFBM_KL(double maturity, int n, double H, int N)
  //N is the number of terms in the infinite sum in Karhunen-Loève theorem.
 	double dt = maturity / n;
 	default_random_engine generator;
-	generator.seed(time(NULL));
+	generator.seed((unsigned int) time(NULL));
 	normal_distribution<double> distribution(0, 1);
 	vector<double> gaussianSample(2 * N + 1, 0);
 	vector<double> coeff_Ck(N, 0);
@@ -107,7 +104,7 @@ SamplePathFBM_KL(double maturity, int n, double H, int N)
 		gaussianSample[2 * i] = distribution(generator);
 		gaussianSample[2 * i + 1] = distribution(generator);
 	}
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < n; i++) //We compute the sum for each time step
 	{
 		double res = sqrt(Coeff_C0_KL(H, maturity)) * (i + 1.) * dt * gaussianSample[0];
 		for (int k = 0; k < N; k++)
@@ -128,4 +125,21 @@ SamplePathFBM_KL(double maturity, int n, double H, int N)
 		(*FBM)[i] = res;
 	}
 	return FBM;
+}
+
+void 
+ExportData(const unique_ptr<vector<double>>& data, string fileName)
+{
+	ofstream file(fileName, ios::out | ios::trunc);
+	if (file)
+	{
+		for (unsigned int i = 0; i < data->size(); i++)
+			file << (*data)[i] << endl;
+		file.close();
+	}
+	else
+	{
+		cerr << "Error while opening file" << endl;
+		exit(1);
+	}
 }

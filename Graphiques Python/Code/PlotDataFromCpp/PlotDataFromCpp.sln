@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PlotDataFromCpp", "PlotDataFromCpp\PlotDataFromCpp.pyproj", "{BA1E5D78-2BFC-47FE-9826-0ECF137FE133}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA1E5D78-2BFC-47FE-9826-0ECF137FE133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA1E5D78-2BFC-47FE-9826-0ECF137FE133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D59A800F-A723-4199-937D-B1E2C5946B14}
+	EndGlobalSection
+EndGlobal

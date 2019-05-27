@@ -1,8 +1,6 @@
-﻿  Functions.cpp
-  cDate.cpp
+﻿  cDate.cpp
   cPeriod.cpp
   main.cpp
+  Functions.cpp
   Generating Code...
-Debug\cDate.obj : warning LNK4042: object specified more than once; extras ignored
-Debug\cPeriod.obj : warning LNK4042: object specified more than once; extras ignored
-  Date.vcxproj -> C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Debug\Date.exe
+LINK : fatal error LNK1104: cannot open file 'C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Debug\cDate.obj'

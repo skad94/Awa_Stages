@@ -5,7 +5,7 @@ double
 Integrate(double(*f)(double, double, int, double), double H, double T, int k, double a, double b) 
 {//Aproximation to an integral using rectangle method over [a, b], used to simulate a fractional 
  //brownian motion sample path by Series Expansion method
-	int n = 10000;
+	int n = 50000;
 	double dt = (b - a) / n;
 	double res = 0;
 	for (int i = 0; i < n; i++)
@@ -129,12 +129,12 @@ SamplePathFBM_KL(double maturity, int n, double H, int N)
 
 void 
 ExportData(const unique_ptr<vector<double>>& data, string fileName)
-{
+{//Export a FBM sample path to a text file
 	ofstream file(fileName, ios::out | ios::trunc);
 	if (file)
 	{
 		for (unsigned int i = 0; i < data->size(); i++)
-			file << (*data)[i] << endl;
+			file << (*data)[i] << ',';
 		file.close();
 	}
 	else

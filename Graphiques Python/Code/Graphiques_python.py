@@ -81,27 +81,27 @@ aa = jj[4] # Change this, putting an integer between 0 and 8
 
 def regr_skew():
     os.chdir('C:\\Users\lroussel\Documents\GitHub\Awa_Stages\Data Excel') # Change this
-	data_ = 'SPX ATM 24052019' 
-	df = pd.read_excel(data_ + ".xlsx")
-	df = np.array(df)
-	values = df[1:,1:]
-	maturities = df[1:,0]
-	logMoneyness = df[0,1:]
-	n1 = len(maturities)
-	n2 = len(logMoneyness)
-	skew = np.zeros((n1,n2-1))
-	for i in range(n2-1):
-    	skew[:,i] = (values[:,i+1] - values[:,i])/(logMoneyness[i+1] - logMoneyness[i])
-	skew = skew[:,9] # get ATM skew
-	logMaturity = np.log(maturities)
-	logSkew = np.log(np.abs(skew))
-	reg_skew = LinearRegression().fit(logMaturity.reshape(-1,1),logSkew)
-	plt.figure(1)
-	plt.plot(np.exp(logMaturity),np.exp(logSkew),'o')
-	plt.plot(np.exp(logMaturity),np.exp(np.dot(logMaturity.reshape(-1,1),reg_skew.coef_) + reg_skew.intercept_))
-	plt.title("SPX : ATM skew en fonction de la maturité. alpha = " + str(round(-float(reg_skew.coef_),2)))
-	plt.legend(['ATM skew','fit'])
-	plt.show()
+    data_ = 'SPX ATM 24052019' 
+    df = pd.read_excel(data_ + ".xlsx")
+    df = np.array(df)
+    values = df[1:,1:]
+    maturities = df[1:,0]
+    logMoneyness = df[0,1:]
+    n1 = len(maturities)
+    n2 = len(logMoneyness)
+    skew = np.zeros((n1,n2-1))
+    for i in range(n2-1):
+        skew[:,i] = (values[:,i+1] - values[:,i])/(logMoneyness[i+1] - logMoneyness[i])
+    skew = skew[:,9] # get ATM skew
+    logMaturity = np.log(maturities)
+    logSkew = np.log(np.abs(skew))
+    reg_skew = LinearRegression().fit(logMaturity.reshape(-1,1),logSkew)
+    plt.figure(1)
+    plt.plot(np.exp(logMaturity),np.exp(logSkew),'o')
+    plt.plot(np.exp(logMaturity),np.exp(np.dot(logMaturity.reshape(-1,1),reg_skew.coef_) + reg_skew.intercept_))
+    plt.title("SPX : ATM skew en fonction de la maturité. alpha = " + str(round(-float(reg_skew.coef_),2)))
+    plt.legend(['ATM skew','fit'])
+    plt.show()
 
 #regr_skew()
 

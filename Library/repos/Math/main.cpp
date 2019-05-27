@@ -41,9 +41,9 @@ int main()
 	
 	//unique_ptr<vector<double>> v(SamplePathFBM_Cholesky(3, 100, 0.3));
 	//ShowVector(*v);
-	const unique_ptr<vector<double>>& v1(SamplePathFBM_KL(3, 1000, 0.8, 50));
+	const unique_ptr<vector<double>>& v1(SamplePathFBM_KL(3, 200, 0.8, 200));
 	const unique_ptr<vector<double>>& v2(SamplePathFBM_Cholesky(3, 200, 0.8));
-	const unique_ptr<vector<double>>& v3(SamplePathFBM_KL(3, 1000, 0.3, 50));
+	const unique_ptr<vector<double>>& v3(SamplePathFBM_KL(3, 200, 0.3, 200));
 	const unique_ptr<vector<double>>& v4(SamplePathFBM_Cholesky(3, 200, 0.3));
 	string name1 = "SimulationFBM_KL_08.txt";
 	string name2 = "SimulationFBM_Cholesky_08.txt";

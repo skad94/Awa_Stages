@@ -79,6 +79,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Debug\cDate.obj;C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Debug\cPeriod.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,11 +126,13 @@
   <ItemGroup>
     <ClInclude Include="cDate.hh" />
     <ClInclude Include="cPeriod.hh" />
+    <ClInclude Include="Functions.hh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cDate.cpp" />
     <ClCompile Include="cPeriod.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Functions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

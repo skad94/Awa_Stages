@@ -2,7 +2,7 @@
 
 cPeriod::cPeriod() : cDate(-1, -1, -1), _convention(conv_30_360) {}
 
-cPeriod::cPeriod(const int& day, const int& month, const int& year, const Convention& convention)
+cPeriod::cPeriod(const int& day, const int& month, const int& year, const eConvention& convention)
 	: cDate(day, month, year), _convention(convention) {}
 
 cPeriod::cPeriod(const cPeriod& period)

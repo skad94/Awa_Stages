@@ -70,4 +70,5 @@ NumberOfDays_To_Date(int ndays)
 			ndays -= ndaysPerMonthReverse[i];
 		}
 	}
+	return cDate(day, month, year);
 }

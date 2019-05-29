@@ -1,6 +1,6 @@
-﻿  cDate.cpp
+﻿  Functions.cpp
+  cDate.cpp
   cPeriod.cpp
   main.cpp
-  Functions.cpp
   Generating Code...
-LINK : fatal error LNK1104: cannot open file 'C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Debug\cDate.obj'
+C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Date\Functions.cpp(73): error C4716: 'NumberOfDays_To_Date': must return a value

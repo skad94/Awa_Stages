@@ -29,5 +29,8 @@ class cSquareMatrix
 };
 
 void ShowVector(const vector<double>& v);
+unique_ptr<vector<double>> operator+(const vector<double>& a, const vector<double>& b);
+unique_ptr<vector<double>> operator-(const vector<double>& a, const vector<double>& b);
+unique_ptr<vector<double>> operator*(double d, const vector<double>& v);
 
 #endif

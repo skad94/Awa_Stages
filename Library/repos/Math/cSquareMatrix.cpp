@@ -134,4 +134,32 @@ ShowVector(const vector<double>& v)
     }
 }
 
+unique_ptr<vector<double>> 
+operator+(const vector<double>& a, const vector<double>& b)
+{//Sum of two vectors
+	int n = a.size();
+	unique_ptr<vector<double>> res(new vector<double>(a));
+	for (int i = 0; i < n; i++)
+		(*res)[i] += b[i];
+	return res;
+}
 
+unique_ptr<vector<double>>
+operator-(const vector<double>& a, const vector<double>& b)
+{//Subtraction between two vectors
+	int n = a.size();
+	unique_ptr<vector<double>> res(new vector<double>(a));
+	for (int i = 0; i < n; i++)
+		(*res)[i] -= b[i];
+	return res;
+}
+
+unique_ptr<vector<double>> 
+operator*(double d, const vector<double>& v)
+{//Product between a scalar and a vector
+	int n = v.size();
+	unique_ptr<vector<double>> res(new vector<double>(v));
+	for (int i = 0; i < n; i++)
+		(*res)[i] *= d;
+	return res;
+}

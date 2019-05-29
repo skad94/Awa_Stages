@@ -30,4 +30,28 @@ unique_ptr<vector<double>> SamplePathFBM_KL(double maturity, int n, double H, in
 
 void ExportData(const unique_ptr<vector<double>>& data, string fileName);
 
+unique_ptr<vector<double>> StandardBM(double maturity, int n, const unique_ptr<cSquareMatrix>& sigma);
+
+
+// rHeston
+
+double DiffusionRoughHeston(int n, double maturity, double P0, double Y0, double alpha, 
+	double lambdaStar, double mu, double beta, double C, double phi1Norm, double phi2Norm, 
+	const unique_ptr<cSquareMatrix>& sigma);
+
+// rBergomi
+
+double IntegrandBergomi(double x, double s, double gamma);
+
+double IntegrateCovBergomi(double(*f)(double, double, double), double x,
+	double gamma, double a, double b);
+
+double Covariance_Wtilde(double u, double v, double H);
+
+double Covariance_StandardMB(double u, double v);
+
+double Covariance_Wtilde_Z(double u, double v, double H, double rho);
+
+
+
 #endif

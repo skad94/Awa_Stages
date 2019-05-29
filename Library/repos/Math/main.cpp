@@ -2,6 +2,8 @@
 
 int main() 
 {
+	srand((unsigned int)time(NULL));
+
     /*cSquareMatrix m1(3);
     m1(0,0) = 4;
     m1(0,1) = 2;
@@ -41,7 +43,8 @@ int main()
 	
 	//unique_ptr<vector<double>> v(SamplePathFBM_Cholesky(3, 100, 0.3));
 	//ShowVector(*v);
-	const unique_ptr<vector<double>>& v1(SamplePathFBM_KL(3, 200, 0.8, 200));
+
+	/*const unique_ptr<vector<double>>& v1(SamplePathFBM_KL(3, 200, 0.8, 200));
 	const unique_ptr<vector<double>>& v2(SamplePathFBM_Cholesky(3, 200, 0.8));
 	const unique_ptr<vector<double>>& v3(SamplePathFBM_KL(3, 200, 0.3, 200));
 	const unique_ptr<vector<double>>& v4(SamplePathFBM_Cholesky(3, 200, 0.3));
@@ -52,6 +55,26 @@ int main()
 	ExportData(v1, name1);
 	ExportData(v2, name2);
 	ExportData(v3, name3);
-	ExportData(v4, name4);
+	ExportData(v4, name4);*/
+
+
+
+	//unique_ptr<cSquareMatrix> ;
+	
+	int n = 100;
+	double maturity = 1;
+	double dt = maturity / n;
+	cSquareMatrix CovarianceStandardBM(n);
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			CovarianceStandardBM(i, j) = CovarianceFBM((i + 1.) * dt, (j + 1.) * dt, 0.5);
+	unique_ptr<cSquareMatrix> sigma = CovarianceStandardBM.Cholesky();
+	for (int i = 0; i < 100; i++)
+	{
+		double stockPrice = DiffusionRoughHeston(n, maturity, 100, 5, 0.65, 1, 1, 1.2, 1, 0.5, 0.25, sigma);
+		cout << stockPrice << endl;
+	}
+	//cout << stockPrice << endl;
+	
 
 }

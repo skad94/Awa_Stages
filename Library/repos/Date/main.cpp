@@ -24,4 +24,7 @@ int main()
 	cPeriod freq(0, 6, 0, { conv_30_360 });
 	vector <cDate> schedule = Schedule(start,maturity,freq);
 	ShowSchedule(schedule);
+	cout << endl;
+	NumberOfDays_To_Date(45760).Show();
+	//cout << cDate::IsLeapYear(1900);
 }

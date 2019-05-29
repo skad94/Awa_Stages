@@ -37,7 +37,13 @@ ShowSchedule(vector<cDate>& schedule)
 cDate 
 NumberOfDays_To_Date(int ndays)
 {//Convert a number of days since 1/1/1900 to a date
-	int year = 1900; 
+	ndays -= 36526;
+	if (ndays <= 0)
+	{
+		cerr << "Please enter a date after 1/1/2000" << endl;
+		exit(1);
+	}
+	int year = 2000; 
 	int month = 1; 
 	int day = 1;
 	while ((ndays > 366 && cDate::IsLeapYear(year)) || (ndays > 365 && !cDate::IsLeapYear(year)))
@@ -53,9 +59,9 @@ NumberOfDays_To_Date(int ndays)
 			year++;
 		}
 	}
-	vector<int> ndaysPerMonthReverse{ 31,30,31,30,31,31,30,31,30,31,28,31 };
+	vector<int> ndaysPerMonthReverse{ 31,28,31,30,31,30,31,31,30,31,30,31 };
 	if (cDate::IsLeapYear(year))
-		ndaysPerMonthReverse[10] = 29;
+		ndaysPerMonthReverse[1] = 29;
 	int i = 0;
 	while (ndays > 0)
 	{
@@ -69,6 +75,7 @@ NumberOfDays_To_Date(int ndays)
 			day += ndays;
 			ndays -= ndaysPerMonthReverse[i];
 		}
+		i++;
 	}
 	return cDate(day, month, year);
 }

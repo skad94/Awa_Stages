@@ -1,6 +1,2 @@
 ﻿  Functions.cpp
-  cDate.cpp
-  cPeriod.cpp
-  main.cpp
-  Generating Code...
-C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Date\Functions.cpp(73): error C4716: 'NumberOfDays_To_Date': must return a value
+  Date.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Debug\Date.exe

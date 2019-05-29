@@ -13,6 +13,6 @@ Schedule(cDate& start, const cPeriod& maturity, const cPeriod& freq);
 void
 ShowSchedule(vector<cDate>& schedule);
 
-//cDate NumberOfDays_To_Date(int ndays);
+cDate NumberOfDays_To_Date(int ndays);
 
 #endif

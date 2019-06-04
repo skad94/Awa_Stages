@@ -19,7 +19,7 @@ int main()
 	d1 -= p1;
 	d1 += p2;
 	d1.Show();*/
-	cDate start(18, 6, 2019);
+	cDate start(4, 6, 2019);
 	cPeriod maturity(0, 0, 5, { conv_30_360 });
 	cPeriod freq(0, 6, 0, { conv_30_360 });
 	vector <cDate> schedule = Schedule(start,maturity,freq);

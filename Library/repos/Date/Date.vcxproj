@@ -79,7 +79,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Debug\cDate.obj;C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Debug\cPeriod.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

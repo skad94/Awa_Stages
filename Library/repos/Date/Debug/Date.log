@@ -1,4 +1,0 @@
-﻿  Functions.cpp
-Debug\cDate.obj : warning LNK4042: object specified more than once; extras ignored
-Debug\cPeriod.obj : warning LNK4042: object specified more than once; extras ignored
-  Date.vcxproj -> C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Debug\Date.exe

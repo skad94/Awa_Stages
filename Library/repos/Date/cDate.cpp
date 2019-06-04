@@ -30,7 +30,7 @@ cDate::GetYear() const
 
 void 
 cDate::Show()
-{
+{//Display date as day/month/year
 	cout << _day << "/" << _month << "/" << _year << endl;
 }
 
@@ -54,7 +54,7 @@ cDate::IsValid() const
 
 void 
 cDate::SetAsInvalid()
-{
+{//Set the date as invalid
 	_day = -1;
 	_month = -1;
 	_year = -1;

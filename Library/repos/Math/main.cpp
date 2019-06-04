@@ -64,16 +64,29 @@ int main()
 	int n = 100;
 	double maturity = 1;
 	double dt = maturity / n;
+	double H = 0.3;
+	double rho = -0.5;
+
 	cSquareMatrix CovarianceStandardBM(n);
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
-			CovarianceStandardBM(i, j) = CovarianceFBM((i + 1.) * dt, (j + 1.) * dt, 0.5);
-	unique_ptr<cSquareMatrix> sigma = CovarianceStandardBM.Cholesky();
-	for (int i = 0; i < 100; i++)
-	{
-		double stockPrice = DiffusionRoughHeston(n, maturity, 100, 5, 0.65, 1, 1, 1.2, 1, 0.5, 0.25, sigma);
-		cout << stockPrice << endl;
-	}
+			CovarianceStandardBM(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
+	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();
+	double stockPriceHeston = DiffusionRoughHeston(n, maturity, 100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25,
+		sigmaStandard);
+
+	cSquareMatrix CovarianceMatrixBergomi(2 * n);
+	for (int i = 0; i < 2 * n; i++)
+		for (int j = 0; j < 2 * n; j++)
+			if (i < n && j < n)
+				CovarianceMatrixBergomi(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
+			else if (i >= n && j >= n)
+				CovarianceMatrixBergomi(i, j) = Covariance_Wtilde((i + 1.) * dt, (j + 1.) * dt, H);
+			else
+				CovarianceMatrixBergomi(i, j) = Covariance_Wtilde_Z((i + 1.) * dt, (j + 1.) * dt, H, rho);
+	unique_ptr<cSquareMatrix> sigmaBergomi = CovarianceMatrixBergomi.Cholesky();
+	double stockPriceBergomi = DiffusionRoughBergomi(n, maturity, 100, 0.005, 0.2, sigmaBergomi);
+
 	//cout << stockPrice << endl;
 	
 

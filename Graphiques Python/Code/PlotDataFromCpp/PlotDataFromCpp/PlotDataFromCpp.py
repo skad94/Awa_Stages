@@ -10,7 +10,9 @@ dataCholesky03 = 'SimulationFBM_Cholesky_03.txt'
 dataCholesky08 = 'SimulationFBM_Cholesky_08.txt'
 dataKL03 = 'SimulationFBM_KL_03.txt'
 dataKL08 = 'SimulationFBM_KL_08.txt'
-f = open(dataKL03, 'r+') # replace the first argument with one of the 4 names above
+data_rHeston = 'rHestonPrice.txt'
+data_rBergomi = 'rBergomiPrice.txt'
+f = open(data_rBergomi, 'r+') # replace the first argument with one of the names above
 FBM_path = f.read().split(',')[:-1]
 f.close()
 FBM_path = np.array(FBM_path).astype(np.float)

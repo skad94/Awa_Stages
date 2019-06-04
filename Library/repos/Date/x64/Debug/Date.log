@@ -1,2 +1,4 @@
-﻿  cDate.cpp
-  Date.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Antoine\repos\x64\Debug\Date.exe
+﻿  Functions.cpp
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Functions.cpp(33,28): warning C4267:  'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Functions.cpp(33,28): warning C4267: C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\Date\Functions.cpp(76) : error C4716: 'NumberOfDays_To_Date': must return a value
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(429,5): error MSB6006: "CL.exe" exited with code 2.

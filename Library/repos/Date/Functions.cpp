@@ -5,22 +5,25 @@ using namespace std;
 
 
 vector<cDate>
-Schedule(cDate& start,const cPeriod& maturity, const cPeriod& freq) 
+Schedule(cDate& start, const cPeriod& maturity, const cPeriod& freq)
 {
-	if (!start.IsValid() || !maturity.IsValid())
+	if (!start.IsValid() || !maturity.IsValid() || (freq.GetDay() == 0 && freq.GetMonth() == 0 && freq.GetYear() == 0))
 	{
-		cerr << "Starting date or maturity is not valid" << endl;
+		cerr << "Starting date, maturity or frequence is not valid" << endl;
 		exit(1);
 	}
 	vector<cDate> schedule;
-	cDate tempo = start + maturity ;
-	schedule.push_back(tempo);
-	while (start < tempo - freq )
+	cDate tempo = start + maturity;
+	if (maturity.GetDay() == 0 && maturity.GetMonth() == 0 && maturity.GetYear() == 0)
+	{
+		schedule.push_back(tempo);
+		return schedule;
+	}
+	while (start < tempo - freq)
 	{
 		tempo = tempo - freq;
-		schedule.insert( schedule.begin() ,tempo);
+		schedule.insert(schedule.begin(), tempo);
 	}
-	schedule.insert(schedule.begin(), start);
 	return schedule;
 }
 

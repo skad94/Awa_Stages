@@ -61,33 +61,37 @@ int main()
 
 	//unique_ptr<cSquareMatrix> ;
 	
-	int n = 100;
+
+
+
+	int numTimeSteps = 100;
 	double maturity = 1;
-	double dt = maturity / n;
-	double H = 0.3;
+	double dt = maturity / numTimeSteps;
+	double HurstExponent = 0.3;
 	double rho = -0.5;
 
-	cSquareMatrix CovarianceStandardBM(n);
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++)
+	//rHeston
+	cSquareMatrix CovarianceStandardBM(numTimeSteps); //We fill the covariance matrix for the standard BM
+	for (int i = 0; i < numTimeSteps; i++)
+		for (int j = 0; j < numTimeSteps; j++)
 			CovarianceStandardBM(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
 	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();
-	double stockPriceHeston = DiffusionRoughHeston(n, maturity, 100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25,
-		sigmaStandard);
+	double stockPriceHeston = DiffusionRoughHeston(numTimeSteps, maturity,
+		100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25, sigmaStandard);
 
-	cSquareMatrix CovarianceMatrixBergomi(2 * n);
-	for (int i = 0; i < 2 * n; i++)
-		for (int j = 0; j < 2 * n; j++)
-			if (i < n && j < n)
+	//rBergomi
+	cSquareMatrix CovarianceMatrixBergomi(2 * numTimeSteps); //We fill the covariance matrix for Wtilde and Z
+	for (int i = 0; i < 2 * numTimeSteps; i++)
+		for (int j = 0; j < 2 * numTimeSteps; j++)
+			if (i < numTimeSteps && j < numTimeSteps)
 				CovarianceMatrixBergomi(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
-			else if (i >= n && j >= n)
-				CovarianceMatrixBergomi(i, j) = Covariance_Wtilde((i + 1.) * dt, (j + 1.) * dt, H);
+			else if (i >= numTimeSteps && j >= numTimeSteps)
+				CovarianceMatrixBergomi(i, j) = Covariance_Wtilde((i + 1.) * dt, (j + 1.) * dt, HurstExponent);
 			else
-				CovarianceMatrixBergomi(i, j) = Covariance_Wtilde_Z((i + 1.) * dt, (j + 1.) * dt, H, rho);
+				CovarianceMatrixBergomi(i, j) = Covariance_Wtilde_Z((i + 1.) * dt, (j + 1.) * dt,
+					HurstExponent, rho);
 	unique_ptr<cSquareMatrix> sigmaBergomi = CovarianceMatrixBergomi.Cholesky();
-	double stockPriceBergomi = DiffusionRoughBergomi(n, maturity, 100, 0.005, 0.2, sigmaBergomi);
-
-	//cout << stockPrice << endl;
+	double stockPriceBergomi = DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigmaBergomi);
 	
 
 }

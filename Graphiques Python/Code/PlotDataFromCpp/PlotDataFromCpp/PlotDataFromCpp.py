@@ -12,7 +12,7 @@ dataKL03 = 'SimulationFBM_KL_03.txt'
 dataKL08 = 'SimulationFBM_KL_08.txt'
 data_rHeston = 'rHestonPrice.txt'
 data_rBergomi = 'rBergomiPrice.txt'
-f = open(data_rBergomi, 'r+') # replace the first argument with one of the names above
+f = open(data_rHeston, 'r+') # replace the first argument with one of the names above
 FBM_path = f.read().split(',')[:-1]
 f.close()
 FBM_path = np.array(FBM_path).astype(np.float)

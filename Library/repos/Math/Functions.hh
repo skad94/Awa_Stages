@@ -35,7 +35,7 @@ unique_ptr<vector<double>> StandardBM(int numTimeSteps, const unique_ptr<cSquare
 
 // rHeston
 
-double DiffusionRoughHeston(int n, double maturity, double P0, double Y0, double alpha, 
+double DiffusionRoughHeston(int numTimeSteps, double maturity, double P0, double Y0, double alpha, 
 	double lambdaStar, double mu, double beta, double C, double phi1Norm, double phi2Norm, 
 	const unique_ptr<cSquareMatrix>& sigma);
 
@@ -45,15 +45,15 @@ double DiffusionRoughHeston(int n, double maturity, double P0, double Y0, double
 double IntegrandBergomi(double x, double s, double gamma);
 
 double IntegrateCovBergomi(double(*f)(double, double, double), double x,
-	double gamma, double a, double b);
+	double gamma, double lowerBound, double upperBound);
 
-double Covariance_Wtilde(double u, double v, double H);
+double Covariance_Wtilde(double s, double t, double HurstExponent);
 
-double Covariance_StandardBM(double u, double v);
+double Covariance_StandardBM(double s, double t);
 
-double Covariance_Wtilde_Z(double u, double v, double H, double rho);
+double Covariance_Wtilde_Z(double s, double t, double HurstExponent, double rho);
 
-unique_ptr<vector<double>> Trajectory_Wtilde_and_Z(int n, const unique_ptr<cSquareMatrix>& sigma);
+unique_ptr<vector<double>> Trajectory_Wtilde_and_Z(int numTimeSteps, const unique_ptr<cSquareMatrix>& sigma);
 
 double DiffusionRoughBergomi(int n, double maturity, double S0, double v0, double eta,
 	const unique_ptr<cSquareMatrix>& sigma);

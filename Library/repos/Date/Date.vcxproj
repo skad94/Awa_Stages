@@ -125,11 +125,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="cDate.hh" />
+    <ClInclude Include="cFloatingLeg.hh" />
     <ClInclude Include="cPeriod.hh" />
     <ClInclude Include="Functions.hh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cDate.cpp" />
+    <ClCompile Include="cFloatingLeg.cpp" />
     <ClCompile Include="cPeriod.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Functions.cpp" />

@@ -29,7 +29,7 @@ cDate::GetYear() const
 }
 
 void 
-cDate::Show()
+cDate::Show() const
 {//Display date as day/month/year
 	cout << _day << "/" << _month << "/" << _year << endl;
 }
@@ -167,7 +167,7 @@ cDate::operator+(const cPeriod& period) const
 }
 
 bool
-cDate::operator<(const cDate& d1)
+cDate::operator<(const cDate& d1) const
 {//Comparison between 2 dates
 	if (_year < d1._year) {
 		return true;

@@ -8,11 +8,13 @@
 using namespace std;
 
 vector<cDate>
-Schedule(cDate& start, const cPeriod& maturity, const cPeriod& freq);
+Schedule(const cDate& start, const cPeriod& maturity, const cPeriod& freq);
 
 void
-ShowSchedule(vector<cDate>& schedule);
+ShowSchedule(const vector<cDate>& schedule);
 
 cDate NumberOfDays_To_Date(int ndays);
+
+int Date_To_NumberOfDays(const cDate& date);
 
 #endif

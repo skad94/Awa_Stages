@@ -20,7 +20,7 @@ class cDate
 		int GetDay() const;
 		int GetMonth() const;
 		int GetYear() const;
-		void Show();
+		void Show() const;
 		virtual bool IsValid() const;
 		void SetAsInvalid();
 		static bool IsLeapYear(const int& year);
@@ -28,7 +28,7 @@ class cDate
 		cDate operator-(const cPeriod& period) const;
 		cDate& operator+=(const cPeriod& period);
 		cDate operator+(const cPeriod& period) const;
-		bool operator<(const cDate& d1);
+		bool operator<(const cDate& d1) const;
 };
 
 #endif

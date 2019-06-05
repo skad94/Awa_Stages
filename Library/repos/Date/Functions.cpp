@@ -5,7 +5,7 @@ using namespace std;
 
 
 vector<cDate>
-Schedule(cDate& start, const cPeriod& maturity, const cPeriod& freq)
+Schedule(const cDate& start, const cPeriod& maturity, const cPeriod& freq)
 {
 	if (!start.IsValid() || !maturity.IsValid() || (freq.GetDay() == 0 && freq.GetMonth() == 0 && freq.GetYear() == 0))
 	{
@@ -14,6 +14,7 @@ Schedule(cDate& start, const cPeriod& maturity, const cPeriod& freq)
 	}
 	vector<cDate> schedule;
 	cDate tempo = start + maturity;
+	schedule.push_back(tempo);
 	if (maturity.GetDay() == 0 && maturity.GetMonth() == 0 && maturity.GetYear() == 0)
 	{
 		schedule.push_back(tempo);
@@ -28,7 +29,7 @@ Schedule(cDate& start, const cPeriod& maturity, const cPeriod& freq)
 }
 
 void
-ShowSchedule(vector<cDate>& schedule)
+ShowSchedule(const vector<cDate>& schedule)
 {
 	int size = schedule.size();
 	for (int i = 0; i < size ; i++)
@@ -43,7 +44,7 @@ NumberOfDays_To_Date(int ndays)
 	ndays -= 36526;
 	if (ndays <= 0)
 	{
-		cerr << "Please enter a date after 1/1/2000" << endl;
+		cerr << "Please enter a number of days larger than 36526" << endl;
 		exit(1);
 	}
 	int year = 2000; 
@@ -81,4 +82,39 @@ NumberOfDays_To_Date(int ndays)
 		i++;
 	}
 	return cDate(day, month, year);
+}
+
+int 
+Date_To_NumberOfDays(const cDate& date)
+{//Convert a number of days since 1/1/1900 to a date
+	int day = date.GetDay();
+	int month = date.GetMonth();
+	int year = date.GetYear();
+	int res = 0;
+	for (int countYear = 1900; countYear < year; countYear++)
+	{
+		if (cDate::IsLeapYear(countYear)) 
+			res += 366;
+		else 
+			res += 365;
+	}
+	for (int countMonth = 1; countMonth < month; countMonth++)
+	{
+		if (countMonth == 4 || countMonth == 6 || countMonth == 9 || countMonth == 11) {
+			res += 30;
+			continue;
+		}
+		if (countMonth == 2 && cDate::IsLeapYear(year)) {
+			res += 29;
+			continue;
+		}
+		if (countMonth == 2) {
+			res += 28;
+			continue;
+		}
+		else
+			res += 31;
+	}
+	res += day;
+	return res + 1;
 }

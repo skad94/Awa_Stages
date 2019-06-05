@@ -22,9 +22,10 @@ int main()
 	cDate start(4, 6, 2019);
 	cPeriod maturity(0, 0, 5, { conv_30_360 });
 	cPeriod freq(0, 6, 0, { conv_30_360 });
-	vector <cDate> schedule = Schedule(start,maturity,freq);
+	vector<cDate> schedule = Schedule(start,maturity,freq);
 	ShowSchedule(schedule);
 	cout << endl;
-	NumberOfDays_To_Date(45760).Show();
+	NumberOfDays_To_Date(43129).Show();
+	cout << Date_To_NumberOfDays(cDate(28,02,2012)) << endl;
 	//cout << cDate::IsLeapYear(1900);
 }

@@ -2,7 +2,7 @@
 #define CFLOATINGLEG_HH
 #include "Functions.hh"
 
-enum eConvention_NonBusinessDay { GoForward, GoBackward };
+enum eConvention_NonBusinessDay { GoForward, GoBackward, GoToTheClosest };
 
 class cFloatingLeg
 {

@@ -2,13 +2,20 @@
 #define FUNCTIONS_HH
 #include <vector>
 #include <iostream>
-#include "cDate.hh"
-#include "cPeriod.hh"
+//#include "cDate.hh"
+//#include "cPeriod.hh"
+//#include "cFloatingLeg.hh"
 
 using namespace std;
 
+class cDate;
+class cPeriod;
+class cFloatingLeg;
+
+enum eConvention_NonBusinessDay { GoForward, GoBackward, GoToTheClosest };
+
 vector<cDate>
-Schedule(const cDate& start, const cPeriod& maturity, const cPeriod& freq);
+Schedule(const cDate& start, const cPeriod& maturity, const cPeriod& freq, const eConvention_NonBusinessDay& NonBusinessDayConvention);
 
 void
 ShowSchedule(const vector<cDate>& schedule);

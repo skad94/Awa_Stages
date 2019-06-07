@@ -146,9 +146,7 @@ YieldCurve(string nom,
 				taux.push_back(contenu[i]);
 				i++;
 			}
-			cout << taux << endl;
 			ReplaceComa(taux);
-			cout << taux << endl;
 			courbe[ConversionReuters(maturite)] = stod(taux) / 100;
 			maturite = "";
 			taux = "";
@@ -335,8 +333,7 @@ int main() {
 	map<double, double> discount = YieldCurve("CourbeOIS06.05.2019");
 	//map<double, double> libor = YieldCurve("CourbeLibor06.05.2019");
 	double fix_rate = (2.0 / 100);
-	//map<double, double> spread = SpreadCurve("CDSSpreadV");
-	//map<double, double> prob = DefaultProb(spread, discount);
-	Affiche(discount);
-	Output(discount);
+	map<double, double> spread = SpreadCurve("CDSSpreadV");
+	map<double, double> prob = DefaultProb(spread, discount);
+	Affiche(prob);
 }

@@ -1,31 +1,102 @@
 #define _USE_MATH_DEFINES 
 #include "Functions.hh"
+#include "cFloatingLeg.hh"
 
 using namespace std;
 
 
 vector<cDate>
-Schedule(const cDate& start, const cPeriod& maturity, const cPeriod& freq)
+Schedule(const cDate& start,
+		 const cPeriod& maturity, 
+	     const cPeriod& freq,
+		 const eConvention_NonBusinessDay& NonBusinessDayConvention)
 {
 	if (!start.IsValid() || !maturity.IsValid() || (freq.GetDay() == 0 && freq.GetMonth() == 0 && freq.GetYear() == 0))
 	{
 		cerr << "Starting date, maturity or frequence is not valid" << endl;
 		exit(1);
 	}
+	cPeriod oneDay(1, 0, 0, conv_ACT_ACT);
+	cPeriod twoDay(2, 0, 0, conv_ACT_ACT);
 	vector<cDate> schedule;
 	cDate tempo = start + maturity;
-	schedule.push_back(tempo);
-	if (maturity.GetDay() == 0 && maturity.GetMonth() == 0 && maturity.GetYear() == 0)
+	if (tempo.WhatDayIsIt() == 6)
+	{
+		if ( NonBusinessDayConvention == GoForward)
+		{
+			schedule.push_back(tempo + twoDay);
+		}
+		if (NonBusinessDayConvention == GoBackward)
+		{
+			schedule.push_back(tempo - oneDay);
+		}
+		if (NonBusinessDayConvention == GoToTheClosest)
+		{
+			schedule.push_back(tempo - oneDay);
+		}
+	}
+	if (tempo.WhatDayIsIt() == 7)
+	{
+		if (NonBusinessDayConvention == GoForward)
+		{
+			schedule.push_back(tempo + oneDay);
+		}
+		if (NonBusinessDayConvention == GoBackward)
+		{
+			schedule.push_back(tempo - twoDay);
+		}
+		if (NonBusinessDayConvention == GoToTheClosest)
+		{
+			schedule.push_back(tempo + oneDay);
+		}
+	}
+	if (tempo.WhatDayIsIt() < 6)
 	{
 		schedule.push_back(tempo);
+	}
+	if (maturity.GetDay() == 0 && maturity.GetMonth() == 0 && maturity.GetYear() == 0)
+	{
 		return schedule;
 	}
 	while (start < tempo - freq)
 	{
 		tempo = tempo - freq;
-		schedule.insert(schedule.begin(), tempo);
+		if (tempo.WhatDayIsIt() == 6)
+		{
+			if (NonBusinessDayConvention == GoForward)
+			{
+				schedule.insert(schedule.begin(), tempo + twoDay);
+			}
+			if (NonBusinessDayConvention == GoBackward)
+			{
+				schedule.insert(schedule.begin(), tempo-oneDay);
+			}
+			if (NonBusinessDayConvention == GoToTheClosest)
+			{
+				schedule.insert(schedule.begin(), tempo-oneDay);
+			}
+		}
+		if (tempo.WhatDayIsIt() == 7)
+		{
+			if (NonBusinessDayConvention == GoForward)
+			{
+				schedule.insert(schedule.begin(), tempo+oneDay);
+			}
+			if (NonBusinessDayConvention == GoBackward)
+			{
+				schedule.insert(schedule.begin(), tempo-twoDay);
+			}
+			if (NonBusinessDayConvention == GoToTheClosest)
+			{
+				schedule.insert(schedule.begin(), tempo+oneDay);
+			}
+		}
+		if (tempo.WhatDayIsIt() < 6)
+		{
+			schedule.insert(schedule.begin(), tempo);
+		}
 	}
-	return schedule;
+	return schedule; 
 }
 
 void

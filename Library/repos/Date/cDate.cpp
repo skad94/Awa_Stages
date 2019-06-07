@@ -1,5 +1,6 @@
 #include "cDate.hh"
 #include "cPeriod.hh"
+//#include "Functions.hh"
 
 cDate::cDate() 
 	:_day(-1), _month(-1), _year(-1) {}
@@ -191,6 +192,13 @@ cDate::operator<(const cDate& d1) const
 			}
 		}
 	}
+}
+
+int
+cDate::WhatDayIsIt() const 
+{ //1 for Monday, 2 Tuesday, 3 Wednesday ... 7 Sunday
+	int date = Date_To_NumberOfDays(*this);
+	return ((date + 5) % 7) + 1;
 }
 
 

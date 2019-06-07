@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "Functions.hh"
 using namespace std;
 
 class cPeriod;
@@ -29,6 +30,8 @@ class cDate
 		cDate& operator+=(const cPeriod& period);
 		cDate operator+(const cPeriod& period) const;
 		bool operator<(const cDate& d1) const;
+		int WhatDayIsIt() const;
+
 };
 
 #endif

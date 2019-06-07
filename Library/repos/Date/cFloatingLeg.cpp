@@ -15,7 +15,7 @@ cFloatingLeg::cFloatingLeg(
 	_paymentGap(paymentGap)
 {
 	//Here we have to construct the 3 schedules
-	_fixingSchedule = Schedule(_startDate, _maturity, _freq);
+	_fixingSchedule = Schedule(_startDate, _maturity, _freq,{ GoForward });
 	_paymentSchedule = _fixingSchedule;
 	_periodsSchedule = _fixingSchedule;
 	for (size_t dateIndex = 0; dateIndex < _fixingSchedule.size(); dateIndex++)

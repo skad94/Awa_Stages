@@ -1,8 +1,8 @@
 #ifndef CFLOATINGLEG_HH
 #define CFLOATINGLEG_HH
 #include "Functions.hh"
-
-enum eConvention_NonBusinessDay { GoForward, GoBackward, GoToTheClosest };
+#include "cDate.hh"
+#include "cPeriod.hh"
 
 class cFloatingLeg
 {

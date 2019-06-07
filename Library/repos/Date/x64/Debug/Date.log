@@ -1,3 +1,2 @@
-﻿  Functions.cpp
-C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Date\Functions.cpp(34): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Date.vcxproj -> C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\x64\Debug\Date.exe
+﻿  main.cpp
+  Date.vcxproj -> C:\Users\alepeltier\Documents\GitHub\Awa_Stages\Library\repos\x64\Debug\Date.exe

@@ -27,5 +27,6 @@ int main()
 	cout << endl;
 	NumberOfDays_To_Date(43129).Show();
 	cout << Date_To_NumberOfDays(cDate(28,02,2012)) << endl;
+	(cDate(19, 9, 2021) + cPeriod(2, 0, 0, conv_ACT_ACT)).Show();
 	//cout << cDate::IsLeapYear(1900);
 }

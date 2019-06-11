@@ -11,7 +11,8 @@ Schedule(const cDate& start,
 	     const cPeriod& freq,
 		 const eConvention_NonBusinessDay& NonBusinessDayConvention)
 {
-	if (!start.IsValid() || !maturity.IsValid() || (freq.GetDay() == 0 && freq.GetMonth() == 0 && freq.GetYear() == 0))
+	if (!start.IsValid() || !maturity.IsValid() ||
+		(freq.GetDay() == 0 && freq.GetMonth() == 0 && freq.GetYear() == 0))
 	{
 		cerr << "Starting date, maturity or frequence is not valid" << endl;
 		exit(1);

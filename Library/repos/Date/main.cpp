@@ -1,7 +1,6 @@
 #include "cDate.hh"
 #include "cPeriod.hh"
 #include "Functions.hh"
-//#include "cFloatingLeg.hh"
 
 
 int main()
@@ -20,14 +19,12 @@ int main()
 	d1 -= p1;
 	d1 += p2;
 	d1.Show();*/
-	cDate start(18, 9, 2019);
+	cDate start(3, 6, 2019);
 	cPeriod maturity(0, 0, 5, { conv_30_360 });
 	cPeriod freq(0, 6, 0, { conv_30_360 });
-	vector<cDate> schedule = Schedule(start,maturity,freq, { GoForward} );
+	vector <cDate> schedule = Schedule(start,maturity,freq);
 	ShowSchedule(schedule);
-	//cout << endl;
-	//NumberOfDays_To_Date(43129).Show();
-	//cout << Date_To_NumberOfDays(cDate(28,02,2012)) << endl;
+	cout << endl;
+	//NumberOfDays_To_Date(45760).Show();
 	//cout << cDate::IsLeapYear(1900);
-	//cout << start.WhatDayIsIt();
 }

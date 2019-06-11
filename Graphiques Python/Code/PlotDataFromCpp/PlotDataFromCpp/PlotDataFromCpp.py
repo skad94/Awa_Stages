@@ -12,10 +12,19 @@ dataKL03 = 'SimulationFBM_KL_03.txt'
 dataKL08 = 'SimulationFBM_KL_08.txt'
 data_rHeston = 'rHestonPrice.txt'
 data_rBergomi = 'rBergomiPrice.txt'
-f = open(data_rHeston, 'r+') # replace the first argument with one of the names above
-FBM_path = f.read().split(',')[:-1]
-f.close()
-FBM_path = np.array(FBM_path).astype(np.float)
+fHeston = open(data_rHeston, 'r+')
+fBergomi = open(data_rBergomi, 'r+')
+path_Heston = fHeston.read().split(',')[:-1]
+path_Bergomi = fBergomi.read().split(',')[:-1]
+fHeston.close()
+fBergomi.close()
+path_Heston = np.array(path_Heston).astype(np.float)
+path_Bergomi = np.array(path_Bergomi).astype(np.float)
 plt.figure()
-plt.plot(FBM_path)
+plt.plot(path_Heston)
+plt.plot(path_Bergomi)
+plt.title("Trajectoire du sous-jacent pour les modèles rHeston et rBergomi")
+plt.xlabel('t')
+plt.ylabel('S')
+plt.legend(['rHeston','rBergomi'])
 plt.show()

@@ -91,6 +91,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Date\x64\Debug\cPeriod.obj;C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Date\x64\Debug\cDate.obj;C:\Users\lroussel\Documents\GitHub\Awa_Stages\Library\repos\Date\x64\Debug\Functions.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

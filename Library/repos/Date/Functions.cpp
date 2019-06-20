@@ -103,8 +103,7 @@ Schedule(const cDate& start,
 void
 ShowSchedule(const vector<cDate>& schedule)
 {
-	int size = schedule.size();
-	for (int i = 0; i < size ; i++)
+	for (size_t i = 0; i < schedule.size(); i++)
 	{
 		schedule[i].Show();
 	}

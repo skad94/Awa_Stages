@@ -1,4 +1,4 @@
-import numpy as np
+﻿import numpy as np
 import os
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -9,20 +9,33 @@ start_date = time.time()
 def simul_Prix(T,beta,phi1,phi2,mu): # On simule le prix microscopique à l'aide de processus de Hawkes
     tau1 = []                        # Les temps de sauts de N+
     tmp1 = 0
+    n1 = 0
+    while tmp1 < T:
+        lambda_barre = mu + np.sum([phi1(tmp1 - t) + beta*phi2(tmp1 - t) for t in tau1])
+        u = np.random.uniform()
+        w = (-1/lambda_barre)*np.log(u)
+        tmp1 += w
+        d = np.random.uniform()
+        if lambda_barre*d < mu + np.sum([phi1(tmp1 - t) + beta*phi2(tmp1 - t) for t in tau1]):
+            n1 += 1
+            tau1.append(tmp1)
+        print(tmp1)
+    if tmp1 > T and tmp1 in tau1:
+        tau1.remove(tmp1)
     tau2 = []                        # Les temps de sauts de N-
     tmp2 = 0
-    lp = mu                          
-    lm = mu                          
-    while tmp1 < T:                  # On simule les temps de saut avec des processus de poisson d'intensités stochastiques "Lambda * delta_tau_i"
-        tau1.append(tmp1)
-        u = np.random.uniform()
-        tmp1 += (-1/lp)*np.log(u)
-        lp = (mu + np.sum(phi1(tmp1 - tau1) + beta*phi2(tmp1 - tau1)))*(tmp1 - tau1[len(tau1) - 1])
+    n2 = 0
     while tmp2 < T:
-        tau2.append(tmp2)
+        lambda_barre = mu + np.sum([phi1(tmp2 - t) + beta*phi2(tmp2 - t) for t in tau2])
         u = np.random.uniform()
-        tmp2 += (-1/lm)*np.log(u)
-        lm = (mu + np.sum(phi1(tmp2 - tau2) + beta*phi2(tmp2 - tau2)))*(tmp2 - tau2[len(tau2) - 1])
+        w = (-1/lambda_barre)*np.log(u)
+        tmp2 += w
+        d = np.random.uniform()
+        if lambda_barre*d < mu + np.sum([phi1(tmp2 - t) + beta*phi2(tmp2 - t) for t in tau2]):
+            n2 += 1
+            tau2.append(tmp2)
+    if tmp2 > T and tmp2 in tau2:
+        tau2.remove(tmp2)
     tau_ = np.unique(np.concatenate((tau1,tau2)))
     n = len(tau_)
     Np = np.zeros(n)                 # N+
@@ -64,7 +77,7 @@ def simul_Prix(T,beta,phi1,phi2,mu): # On simule le prix microscopique à l'aide
     return [tau_,P]
 
 def phi1(x):
-    return 1/(x**0.7)
+    return 0.005*np.exp(-2000*x)
 
 def phi2(x):
     return 1/(x**0.7)
@@ -72,19 +85,19 @@ def phi2(x):
 
 # Export data :
 
-#Hawkes = [simul_Prix(T,2,phi1,phi2,5) for T in [500,1000,2000,5000,10000,15000,20000]] 
-#d_ = {'tau500':Hawkes[0][0],'data500':Hawkes[0][1]}
+#Hawkes = [simul_Prix(T,1.001,phi1,phi1,1.2) for T in [10,100,500,1000]] 
+#d_ = {'tau10':Hawkes[0][0],'data10':Hawkes[0][1]}
+#ddf = pd.DataFrame(d_,columns = ['tau10','data10'])
+#export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes10.xlsx', index = None, header=True)
+#d_ = {'tau100':Hawkes[1][0],'data100':Hawkes[1][1]}
+#ddf = pd.DataFrame(d_,columns = ['tau100','data100'])
+#export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes100.xlsx', index = None, header=True)
+#d_ = {'tau500':Hawkes[2][0],'data500':Hawkes[2][1]}
 #ddf = pd.DataFrame(d_,columns = ['tau500','data500'])
 #export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes500.xlsx', index = None, header=True)
-#d_ = {'tau1000':Hawkes[1][0],'data1000':Hawkes[1][1]}
+#d_ = {'tau1000':Hawkes[3][0],'data1000':Hawkes[3][1]}
 #ddf = pd.DataFrame(d_,columns = ['tau1000','data1000'])
 #export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes1000.xlsx', index = None, header=True)
-#d_ = {'tau2000':Hawkes[2][0],'data2000':Hawkes[2][1]}
-#ddf = pd.DataFrame(d_,columns = ['tau2000','data2000'])
-#export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes2000.xlsx', index = None, header=True)
-#d_ = {'tau5000':Hawkes[3][0],'data5000':Hawkes[3][1]}
-#ddf = pd.DataFrame(d_,columns = ['tau5000','data5000'])
-#export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes5000.xlsx', index = None, header=True)
 #d_ = {'tau10000':Hawkes[4][0],'data10000':Hawkes[4][1]}
 #ddf = pd.DataFrame(d_,columns = ['tau10000','data10000'])
 #export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes10000.xlsx', index = None, header=True)
@@ -107,24 +120,26 @@ def plot_vol_Hawkes(T):
     df = np.array(df)[1:]
     tau_ = df[:,0]
     x = df[:,1]
-    y = x
-    y_barre = np.mean(y)
+    x -= np.min(x)
+    x += 1
+    y = (x[1:]/x[:-1] - 1)
+    #y = x
     sigm = []
     for i in range(9,len(y)): # on prend une fenêtre glissante de 10 sauts
+        y_barre = np.mean(y[i-9:i+1])
         sigm.append((1/9)*np.sum((y[i-9:i+1] - y_barre)**2))
     sigm = np.sqrt(sigm)/np.sqrt(T)
-    t = tau_[9:]
+    t = tau_[10:]
     plt.figure()
-    plt.title("Vol Hawkes : T = " + str(T))
+    plt.title("T = " + str(T))
     plt.xlabel("t")
-    plt.ylabel("sigma")
     plt.plot(t,sigm)
-    plt.plot(t,x[9:]/np.sqrt(T))
+    plt.plot(t,x[10:]/np.sqrt(T))
     plt.plot(t,np.mean(sigm)*np.ones(len(t)))
     plt.legend(["Vol","Stock","Vol mean"])
     plt.show()
 
-#plot_vol_Hawkes(500)
+plot_vol_Hawkes(100)
 
 
 

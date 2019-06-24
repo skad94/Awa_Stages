@@ -128,6 +128,7 @@
     <ClInclude Include="cFloatingLeg.hh" />
     <ClInclude Include="cPeriod.hh" />
     <ClInclude Include="Functions.hh" />
+    <ClInclude Include="cLeg.hh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cDate.cpp" />

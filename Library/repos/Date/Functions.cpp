@@ -11,50 +11,24 @@ Schedule(const cDate& start,
 	     const cPeriod& freq,
 		 const eConvention_NonBusinessDay& NonBusinessDayConvention)
 {
-	if (!start.IsValid() || !maturity.IsValid() ||
-		(freq.GetDay() == 0 && freq.GetMonth() == 0 && freq.GetYear() == 0))
+	if (!start.IsValid())
 	{
-		cerr << "Starting date, maturity or frequence is not valid" << endl;
+		cerr << "Starting date is not valid" << endl;
 		exit(1);
 	}
-	cPeriod oneDay(1, 0, 0, conv_ACT_ACT);
-	cPeriod twoDay(2, 0, 0, conv_ACT_ACT);
+	if (!maturity.IsValid())
+	{
+		cerr << "Maturity is not valid" << endl;
+		exit(1);
+	}
+	if (!freq.IsValid())
+	{
+		cerr << "Frequency is not valid" << endl;
+		exit(1);
+	}
 	vector<cDate> schedule;
 	cDate tempo = start + maturity;
-	if (tempo.WhatDayIsIt() == 6)
-	{
-		if ( NonBusinessDayConvention == GoForward)
-		{
-			schedule.push_back(tempo + twoDay);
-		}
-		if (NonBusinessDayConvention == GoBackward)
-		{
-			schedule.push_back(tempo - oneDay);
-		}
-		if (NonBusinessDayConvention == GoToTheClosest)
-		{
-			schedule.push_back(tempo - oneDay);
-		}
-	}
-	if (tempo.WhatDayIsIt() == 7)
-	{
-		if (NonBusinessDayConvention == GoForward)
-		{
-			schedule.push_back(tempo + oneDay);
-		}
-		if (NonBusinessDayConvention == GoBackward)
-		{
-			schedule.push_back(tempo - twoDay);
-		}
-		if (NonBusinessDayConvention == GoToTheClosest)
-		{
-			schedule.push_back(tempo + oneDay);
-		}
-	}
-	if (tempo.WhatDayIsIt() < 6)
-	{
-		schedule.push_back(tempo);
-	}
+	schedule.push_back(tempo);
 	if (maturity.GetDay() == 0 && maturity.GetMonth() == 0 && maturity.GetYear() == 0)
 	{
 		return schedule;
@@ -62,41 +36,9 @@ Schedule(const cDate& start,
 	while (start < tempo - freq)
 	{
 		tempo = tempo - freq;
-		if (tempo.WhatDayIsIt() == 6)
-		{
-			if (NonBusinessDayConvention == GoForward)
-			{
-				schedule.insert(schedule.begin(), tempo + twoDay);
-			}
-			if (NonBusinessDayConvention == GoBackward)
-			{
-				schedule.insert(schedule.begin(), tempo-oneDay);
-			}
-			if (NonBusinessDayConvention == GoToTheClosest)
-			{
-				schedule.insert(schedule.begin(), tempo-oneDay);
-			}
-		}
-		if (tempo.WhatDayIsIt() == 7)
-		{
-			if (NonBusinessDayConvention == GoForward)
-			{
-				schedule.insert(schedule.begin(), tempo+oneDay);
-			}
-			if (NonBusinessDayConvention == GoBackward)
-			{
-				schedule.insert(schedule.begin(), tempo-twoDay);
-			}
-			if (NonBusinessDayConvention == GoToTheClosest)
-			{
-				schedule.insert(schedule.begin(), tempo+oneDay);
-			}
-		}
-		if (tempo.WhatDayIsIt() < 6)
-		{
-			schedule.insert(schedule.begin(), tempo);
-		}
+		schedule.insert(schedule.begin(), tempo);
 	}
+	SetAsValidSchedule(schedule, NonBusinessDayConvention);
 	return schedule; 
 }
 
@@ -189,3 +131,45 @@ Date_To_NumberOfDays(const cDate& date)
 	res += day;
 	return res + 1;
 }
+
+void
+SetAsValidSchedule(vector<cDate>& schedule, const eConvention_NonBusinessDay& NonBusinessDayConvention)
+{//Change the schedule so there are only business days
+	cPeriod oneDay(1, 0, 0, conv_ACT_ACT);
+	cPeriod twoDay(2, 0, 0, conv_ACT_ACT);
+	for (size_t dateIndex = 1; dateIndex < schedule.size(); dateIndex++) //we don't change the start date
+	{
+		cDate tempo = schedule[dateIndex];
+		if (tempo.WhatDayIsIt() == 6)
+		{
+			if (NonBusinessDayConvention == GoForward)
+			{
+				schedule[dateIndex] = tempo + twoDay;
+			}
+			if (NonBusinessDayConvention == GoBackward)
+			{
+				schedule[dateIndex] = tempo - oneDay;
+			}
+			if (NonBusinessDayConvention == GoToTheClosest)
+			{
+				schedule[dateIndex] = tempo - oneDay;
+			}
+		}
+		if (tempo.WhatDayIsIt() == 7)
+		{
+			if (NonBusinessDayConvention == GoForward)
+			{
+				schedule[dateIndex] = tempo + oneDay;
+			}
+			if (NonBusinessDayConvention == GoBackward)
+			{
+				schedule[dateIndex] = tempo - twoDay;
+			}
+			if (NonBusinessDayConvention == GoToTheClosest)
+			{
+				schedule[dateIndex] = tempo + oneDay;
+			}
+		}
+	}
+}
+

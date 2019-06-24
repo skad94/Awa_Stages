@@ -24,4 +24,7 @@ cDate NumberOfDays_To_Date(int ndays);
 
 int Date_To_NumberOfDays(const cDate& date);
 
+void
+SetAsValidSchedule(vector<cDate>& schedule, const eConvention_NonBusinessDay& NonBusinessDayConvention);
+
 #endif

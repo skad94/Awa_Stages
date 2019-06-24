@@ -44,5 +44,8 @@
     <ClInclude Include="cFloatingLeg.hh">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="cLeg.hh">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

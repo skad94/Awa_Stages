@@ -13,6 +13,7 @@ private:
 public:
 	cFixedLeg(const cLeg& leg, const double& fixedRate);
 	cFixedLeg(const cFixedLeg& fixedLeg);
+	double PriceLeg() const override;
 };
 
 

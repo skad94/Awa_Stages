@@ -1,7 +1,8 @@
 #include "cDate.hh"
 #include "cPeriod.hh"
-#include "Functions.hh"
 #include "cFloatingLeg.hh"
+#include "cFixedLeg.hh"
+
 
 
 int main()
@@ -25,4 +26,6 @@ int main()
 	cPeriod freq(0, 6, 0, { conv_30_360 });
 	vector <cDate> schedule = Schedule(start, maturity, freq, { GoForward });
 	ShowSchedule(schedule);
+	cout << maturity.ConvertToDayFraction() << endl;
+	cout << freq.ConvertToDayFraction() << endl;
 }

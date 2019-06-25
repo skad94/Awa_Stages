@@ -6,8 +6,8 @@
 class cInterestRateSwap 
 {
 private:
-	const cLeg _firstLeg;
-	const cLeg _secondLeg;
+	const cLeg& _firstLeg;
+	const cLeg& _secondLeg;
 
 public:
 	cInterestRateSwap(const cLeg& firstLeg, const cLeg& secondLeg);

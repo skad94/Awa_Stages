@@ -14,12 +14,14 @@ protected:
 	const cPeriod _paymentGap;
 	vector<cDate> _paymentSchedule;
 	vector<cDate> _periodsSchedule;
+	const map<double, double> _discount;
 
 public:
 	cLeg(const eConvention_NonBusinessDay& NonBusinessDayConvention, const cPeriod& maturity,
-		const cPeriod& freq, const cDate& startDate, const cPeriod& paymentGap);
+		const cPeriod& freq, const cDate& startDate, 
+		const cPeriod& paymentGap, const map<double, double> discount);
 	cLeg(const cLeg& leg);
-
+	virtual double PriceLeg() const = 0;
 };
 
 

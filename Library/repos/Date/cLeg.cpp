@@ -5,12 +5,14 @@ cLeg::cLeg(
 	const cPeriod& maturity,
 	const cPeriod& freq,
 	const cDate& startDate,
-	const cPeriod& paymentGap):
+	const cPeriod& paymentGap,
+	const map<double, double> discount):
 	_NonBusinessDayConvention(NonBusinessDayConvention),
 	_maturity(maturity),
 	_freq(freq),
 	_startDate(startDate),
-	_paymentGap(paymentGap)
+	_paymentGap(paymentGap),
+	_discount(discount)
 {
 	//Here we have to construct the 2 schedules
 	_periodsSchedule = Schedule(_startDate, _maturity, _freq, _NonBusinessDayConvention);
@@ -30,4 +32,5 @@ cLeg::cLeg(const cLeg& leg):
 	_startDate(leg._startDate),
 	_paymentGap(leg._paymentGap),
 	_periodsSchedule(leg._periodsSchedule),
-	_paymentSchedule(leg._paymentSchedule) {}
+	_paymentSchedule(leg._paymentSchedule),
+	_discount(leg._discount) {}

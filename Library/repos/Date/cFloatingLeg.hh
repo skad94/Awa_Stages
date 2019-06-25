@@ -14,6 +14,7 @@ private:
 public:
 	cFloatingLeg(const cLeg& leg, const cPeriod& fixingGap);
 	cFloatingLeg(const cFloatingLeg& floatingLeg);
+	double PriceLeg() const override;
 };
 
 

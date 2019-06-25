@@ -10,5 +10,6 @@ cInterestRateSwap::cInterestRateSwap(const cInterestRateSwap& interestRateSwap) 
 
 double cInterestRateSwap::Price_IRS() const
 {
-	return 0; // Comment Pricer ??
+	return _firstLeg.PriceLeg() - _secondLeg.PriceLeg();
 }
+

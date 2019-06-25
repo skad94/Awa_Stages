@@ -99,7 +99,7 @@ NumberOfDays_To_Date(int ndays)
 
 int 
 Date_To_NumberOfDays(const cDate& date)
-{//Convert a number of days since 1/1/1900 to a date
+{//Convert a date to a number of days since	1/1/1900
 	int day = date.GetDay();
 	int month = date.GetMonth();
 	int year = date.GetYear();
@@ -137,7 +137,7 @@ SetAsValidSchedule(vector<cDate>& schedule, const eConvention_NonBusinessDay& No
 {//Change the schedule so there are only business days
 	cPeriod oneDay(1, 0, 0, conv_ACT_ACT);
 	cPeriod twoDay(2, 0, 0, conv_ACT_ACT);
-	for (size_t dateIndex = 1; dateIndex < schedule.size(); dateIndex++) //we don't change the start date
+	for (size_t dateIndex = 0; dateIndex < schedule.size(); dateIndex++)
 	{
 		cDate tempo = schedule[dateIndex];
 		if (tempo.WhatDayIsIt() == 6)
@@ -173,3 +173,51 @@ SetAsValidSchedule(vector<cDate>& schedule, const eConvention_NonBusinessDay& No
 	}
 }
 
+double
+Interpolation(
+	const double& x,
+	const map<double, double> curve,
+	const string convention)
+{//Interpolation for the yield curve from the data
+	double t1;
+	double t2;
+	double r1;
+	double r2;
+	map<double, double>::const_iterator it = curve.begin();
+	if (x < it->first)
+	{
+		return it->second;
+	}
+	for (it; it != curve.end(); it++)
+	{
+		t2 = it->first; r2 = it->second;
+		if (x < it->first)
+		{
+			it--;
+			t1 = it->first; r1 = it->second;
+			return (x - t2) / (t1 - t2) * r1 + (x - t1) / (t2 - t1) * r2;
+		}
+	}
+	return r2;
+}
+
+double
+ZC(
+	const double& rate,
+	const double& maturity,
+	string convention,
+	const double& t)
+{//ZC Price with 2 convention T the maturity and t the date of valuation are exprimed in years
+	if (convention == "composed")
+	{
+		return pow(1.0 / (1.0 + rate), maturity - t);
+		//return 1;
+	}
+	if (convention == "expo")
+	{
+		return exp(-rate * (maturity - t));
+	}
+	else {
+		return 0;
+	}
+}

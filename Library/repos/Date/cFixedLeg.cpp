@@ -11,10 +11,12 @@ cFixedLeg::cFixedLeg(const cFixedLeg& fixedLeg) :
 double cFixedLeg::PriceLeg() const
 {//Price of the fixed leg
 	double price = 0;
-	for (double i = _freq.ConvertToDayFraction();
-		i <= _maturity.ConvertToDayFraction(); i = i + _freq.ConvertToDayFraction())
+	for (size_t i = 1; i < _paymentSchedule.size(); i++)
 	{
-		price -= ZC(Interpolation(i, _discount), i) * _freq.ConvertToDayFraction() * _fixedRate;
+		double dayFraction = 
+			(_paymentSchedule[i].minus(_startDate, _DayCountConvention)).ConvertToDayFraction();
+		price += ZC(Interpolation(dayFraction, _discount), dayFraction) 
+			* _freq.ConvertToDayFraction() * _fixedRate;
 	}
 	return price;
 }

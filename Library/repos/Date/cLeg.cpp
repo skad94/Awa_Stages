@@ -2,12 +2,14 @@
 
 cLeg::cLeg(
 	const eConvention_NonBusinessDay& NonBusinessDayConvention,
+	const eConvention& DayCountConvention,
 	const cPeriod& maturity,
 	const cPeriod& freq,
 	const cDate& startDate,
 	const cPeriod& paymentGap,
 	const map<double, double> discount):
 	_NonBusinessDayConvention(NonBusinessDayConvention),
+	_DayCountConvention(DayCountConvention),
 	_maturity(maturity),
 	_freq(freq),
 	_startDate(startDate),
@@ -27,6 +29,7 @@ cLeg::cLeg(
 
 cLeg::cLeg(const cLeg& leg):
 	_NonBusinessDayConvention(leg._NonBusinessDayConvention),
+	_DayCountConvention(leg._DayCountConvention),
 	_maturity(leg._maturity),
 	_freq(leg._freq),
 	_startDate(leg._startDate),

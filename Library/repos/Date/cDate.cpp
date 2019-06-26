@@ -201,4 +201,31 @@ cDate::WhatDayIsIt() const
 	return ((date + 5) % 7) + 1;
 }
 
-
+cPeriod 
+cDate::minus(const cDate& date, const eConvention& convention) const
+{// date1 - date2 = period
+	int year = _year - date._year;
+	int month = _month - date._month;
+	if (month < 0)
+	{
+		year -= 1;
+		month += 12;
+	}
+	int day = _day - date._day;
+	if (day < 0)
+	{
+		month -= 1;
+		if (_month == 4 || _month == 6 || _month == 9 || _month == 11)
+			day += 30;
+		else if (_month == 2)
+		{
+			if (IsLeapYear(_year))
+				day += 29;
+			else
+				day += 28;
+		}
+		else
+			day += 31;
+	}
+	return cPeriod(day, month, year, convention);
+}

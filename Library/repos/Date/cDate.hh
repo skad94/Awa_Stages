@@ -6,8 +6,6 @@
 #include "Functions.hh"
 using namespace std;
 
-enum eConvention { conv_30_360, conv_30_365, conv_ACT_ACT };
-
 class cPeriod;
 
 class cDate 

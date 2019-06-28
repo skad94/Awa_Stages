@@ -27,7 +27,7 @@ public:
 		const cPeriod& paymentGap, 
 		const map<double, double> discount);
 	cLeg(const cLeg& leg);
-	virtual double PriceLeg() const = 0;
+	virtual double PriceLeg() const;
 };
 
 

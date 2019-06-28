@@ -2,6 +2,7 @@
 #include "cPeriod.hh"
 #include "cFloatingLeg.hh"
 #include "cFixedLeg.hh"
+#include "cInterestRateSwap.hh"
 #include <iostream>
 using namespace std;
 
@@ -23,12 +24,30 @@ int main()
 	d1 -= p1;
 	d1 += p2;
 	d1.Show();*/
-	cDate start(1, 9, 2019);
-	cPeriod maturity(0, 0, 1, conv_30_360);
-	cPeriod freq(0, 6, 0, conv_30_360);
-	vector <cDate> schedule = Schedule(start, maturity, freq, GoForward);
-	ShowSchedule(schedule);
-	cout << maturity.ConvertToDayFraction() << endl;
-	cout << freq.ConvertToDayFraction() << endl;
-	(cDate(1, 1, 2018).minus(cDate(2, 3, 2015), conv_30_360)).Show();
+
+	eConvention conv = conv_30_360;
+	cDate start(28, 6, 2019);
+	cPeriod maturity(0, 0, 5, conv);
+	cPeriod freq(0, 6, 0, conv);
+	//vector <cDate> schedule = Schedule(start, maturity, freq, GoForward);
+	//ShowSchedule(schedule);
+	//cout << maturity.ConvertToDayFraction() << endl;
+	//cout << freq.ConvertToDayFraction() << endl;
+	//(cDate(1, 1, 2018).minus(cDate(2, 3, 2015), conv_30_360)).Show();
+	//(cDate(29, 8, 2019) + cPeriod(0, 6, 0, conv_30_360)).Show();*/
+	cPeriod paymentGap(0, 0, 0, conv);
+	cPeriod fixingGap(0, 0, 0, conv);
+
+	map<double, double> discount = YieldCurve("CourbeOIS28.06.2019", conv, "lroussel");
+	double fixedRate = 3.0 / 100;
+	cLeg leg(GoForward, conv, maturity, freq, start, paymentGap, discount);
+	const cFixedLeg fixedLeg(leg, fixedRate);
+	const cFloatingLeg floatingLeg(leg, fixingGap);
+	cInterestRateSwap swap(fixedLeg, floatingLeg);
+	double notional = 70000;
+	cout << floatingLeg.PriceLeg() * notional << endl;
+	cout << fixedLeg.PriceLeg() * notional << endl;
+	cout << swap.Price_IRS() * notional << endl;
+	//double frac = (cDate(3, 7, 2023).minus(cDate(27, 6, 2019), conv_30_360)).ConvertToDayFraction();
+	//cout << ZC(Interpolation(frac, discount), frac) << endl;
 }

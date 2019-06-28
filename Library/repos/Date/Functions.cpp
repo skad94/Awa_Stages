@@ -1,8 +1,9 @@
 #define _USE_MATH_DEFINES 
 #include "Functions.hh"
 #include "cFloatingLeg.hh"
+#include "cFixedLeg.hh"
 
-using namespace std;
+//using namespace std;
 
 
 vector<cDate>
@@ -208,7 +209,7 @@ ZC(
 	string convention,
 	const double& t)
 {//ZC Price with 2 convention T the maturity and t the date of valuation are exprimed in years
-	if (convention == "composed")
+	/*if (convention == "composed")
 	{
 		return pow(1.0 / (1.0 + rate), maturity - t);
 		//return 1;
@@ -219,5 +220,127 @@ ZC(
 	}
 	else {
 		return 0;
+	}*/
+	return rate;
+}
+
+void
+ReplaceComa(string& s)
+{//Conversion of 1,43 to 1.43
+	int i = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == ',')
+		{
+			s[i] = '.';
+		}
+		i++;
+	}
+}
+
+double
+ConversionReuters(const string& maturity, const eConvention& convention)
+{//Conversion of "1Y6M" to 1.5
+	int i = 0;
+	string s = "";
+	int day = 0;
+	int month = 0;
+	int year = 0;
+	while (maturity[i] != '\0') {
+		while (int(maturity[i]) >= 48 && int(maturity[i]) <= 57)
+		{
+			s.push_back(maturity[i]);
+			i++;
+		}
+		if (maturity[i] == 'Y')
+		{
+			year += stoi(s);
+			s = "";
+			i++;
+		}
+		if (maturity[i] == 'M')
+		{
+			month += stoi(s);
+			s = "";
+			i++;
+		}
+		if (maturity[i] == 'W')
+		{
+			day += 7 * stoi(s);
+			s = "";
+			i++;
+		}
+		if (maturity[i] == 'D')
+		{
+			day += stoi(s);
+			s = "";
+			i++;
+		}
+	}
+	return cPeriod(day,month,year,convention).ConvertToDayFraction();
+}
+
+map<double, double>
+YieldCurve(
+	string name,
+	const eConvention& convention,
+	string user)
+{//Get the market data from a csv - mettre en argument le fichier
+	map<double, double> curve;
+	std::ifstream data("C:/users/" + user + "/Documents/GitHub/Awa_Stages/Data/" + name + ".csv", std::ios::in);
+	if (data)
+	{
+		string content;
+		string maturity = "";
+		string rate = "";
+		for (int i = 0; i < 7; i++)
+		{
+			getline(data, content);
+		}
+		while (getline(data, content))
+		{
+			int i = 0;
+			while (content[i] != ';')
+			{
+				maturity.push_back(content[i]);
+				i++;
+			}
+			int nb = 0;
+			while (nb < 4)
+			{
+				if (content[i] != ';')
+				{
+					i++;
+				}
+				else
+				{
+					nb++; i++;
+				}
+			}
+			while (content[i] != '\0')
+			{
+				rate.push_back(content[i]);
+				i++;
+			}
+			ReplaceComa(rate);
+			curve[ConversionReuters(maturity, convention)] = stod(rate);
+			maturity = "";
+			rate = "";
+		}
+		data.close();
+	}
+	else
+	{
+		std::cout << "Can't open the file !" << std::endl;
+	}
+	return curve;
+}
+
+void
+Affiche(const map<double, double> mymap)
+{//show the content of a map
+	for (map<double, double>::const_iterator it = mymap.begin(); it != mymap.end(); it++)
+	{
+		std::cout << it->first << " : " << it->second << endl;
 	}
 }

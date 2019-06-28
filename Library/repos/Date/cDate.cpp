@@ -101,6 +101,29 @@ cDate::operator-=(const cPeriod& period)
 	}
 	else //Case where the difference between days is positive, there is nothing more to do
 		_day = dayDiff;
+	if ((_month == 4 || _month == 6 || _month == 9 || _month == 11) && _day == 31)
+	{
+		_day = 1;
+		_month += 1;
+	}
+	if (_month == 2)
+	{
+		if ((IsLeapYear(_year) && _day == 30) || (!IsLeapYear(_year) && _day == 29))
+		{
+			_day = 1;
+			_month += 1;
+		}
+		if ((IsLeapYear(_year) && _day == 31) || (!IsLeapYear(_year) && _day == 30))
+		{
+			_day = 2;
+			_month += 1;
+		}
+		if (!IsLeapYear(_year) && _day == 31)
+		{
+			_day = 3;
+			_month += 1;
+		}
+	}
 	return *this;
 }
 

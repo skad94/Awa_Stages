@@ -2,6 +2,7 @@
 import os
 from matplotlib import pyplot as plt
 
+
 os.chdir('C:\\Users\\lroussel\\Documents\\GitHub\\Awa_Stages\\Library\\repos\\Math') # Change this
 
 # Plotting a FBM sample path which was generated using C++ :
@@ -28,3 +29,4 @@ plt.xlabel('t')
 plt.ylabel('S')
 plt.legend(['rHeston','rBergomi'])
 plt.show()
+

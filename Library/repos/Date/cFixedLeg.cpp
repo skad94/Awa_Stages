@@ -13,10 +13,12 @@ double cFixedLeg::PriceLeg() const
 	double price = 0;
 	for (size_t i = 1; i < _paymentSchedule.size(); i++)
 	{
-		double dayFraction = 
+		double dayFractionPayment =
 			(_paymentSchedule[i].minus(_startDate, _DayCountConvention)).ConvertToDayFraction();
-		price += ZC(Interpolation(dayFraction, _discount), dayFraction) 
-			* _freq.ConvertToDayFraction() * _fixedRate;
+		double dayFraction =
+			(_periodsSchedule[i].minus(_periodsSchedule[i - 1], _DayCountConvention)).ConvertToDayFraction();
+		price += ZC(Interpolation(dayFractionPayment, _discount), dayFractionPayment) 
+			* dayFraction * _fixedRate;
 	}
 	return price;
 }

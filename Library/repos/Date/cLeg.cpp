@@ -37,3 +37,9 @@ cLeg::cLeg(const cLeg& leg):
 	_periodsSchedule(leg._periodsSchedule),
 	_paymentSchedule(leg._paymentSchedule),
 	_discount(leg._discount) {}
+
+double 
+cLeg::PriceLeg() const
+{
+	return 0;
+}

@@ -76,6 +76,82 @@ def simul_Prix(T,beta,phi1,phi2,mu): # On simule le prix microscopique à l'aide
     plt.show()
     return [tau_,P]
 
+
+def simul_Prix_2dim(T,beta,phi1,phi2,mu):
+    tau1 = []                        # Les temps de sauts de N+
+    #tmp1 = 0
+    n1 = 0
+    tau2 = []                        # Les temps de sauts de N-
+    #tmp2 = 0
+    n2 = 0
+    t = 0
+    while t < T:
+        lambda_barre = mu + np.sum([phi1(t - tt) + beta*phi2(t - tt) for tt in tau1])
+        lambda_barre += (mu + np.sum([phi1(t - tt) + beta*phi2(t - tt) for tt in tau2]))
+        u = np.random.uniform()
+        w = (-1/lambda_barre)*np.log(u)
+        t += w
+        d = np.random.uniform()
+        lambda_s = mu + np.sum([phi1(t - tt) + beta*phi2(t - tt) for tt in tau1])
+        lambda_s += (mu + np.sum([phi1(t - tt) + beta*phi2(t - tt) for tt in tau2]))
+        if lambda_barre*d < lambda_s:
+            if d <= (mu + np.sum([phi1(t - tt) + beta*phi2(t - tt) for tt in tau1]))/lambda_barre:
+                n1 += 1
+                tau1.append(t)
+            else:
+                n2 += 1
+                tau2.append(t)
+    if t > T and t in tau1:
+        tau1.remove(t)
+    if t > T and t in tau2:
+        tau2.remove(t)
+    tau_ = np.unique(np.concatenate((tau1,tau2)))
+    n = len(tau_)
+    Np = np.zeros(n)                 # N+
+    Nm = np.zeros(n)                 # N-
+    k = 1                            # Ici on cherche à savoir, pour chaque instant de saut, lequel des deux N+ ou N- saute afin de pouvoir
+    i = 1                            # représenter la trajectoire du prix P = N+ - N-
+    j = 1
+    n1 = len(tau1)
+    n2 = len(tau2)
+    while i < n1 and j < n2:
+        if tau1[i] < tau2[j]:
+            Np[k] = Np[k-1] + 1
+            Nm[k] = Nm[k-1]
+            i += 1
+        else:
+            Nm[k] = Nm[k-1] + 1
+            Np[k] = Np[k-1]
+            j += 1
+        k += 1
+    while i < n1: # ici, on va rentrer dans UNE SEULE des deux boucles while
+        Np[k] = Np[k-1] + 1
+        Nm[k] = Nm[k-1]
+        k += 1
+        i += 1
+    while j < n2:
+        Nm[k] = Nm[k-1] + 1
+        Np[k] = Np[k-1]
+        k += 1
+        j += 1
+    P = Np - Nm
+    Np = Np[:-1]
+    Nm = Nm[:-1]
+    P = P[:-1]
+    tau_ = tau_[:-1]
+    plt.figure()
+    #plt.plot(tau_,Np,'o')
+    #plt.plot(tau_,Nm,'+')
+    plt.plot(tau_,P)
+    #plt.legend(['Np','Nm','P'])
+    plt.show()
+    return [tau_,P]
+
+
+
+
+
+
 def phi1(x):
     return 0.005*np.exp(-2000*x)
 
@@ -84,7 +160,7 @@ def phi2(x):
 
 
 # Export data :
-
+ 
 #Hawkes = [simul_Prix(T,1.001,phi1,phi1,1.2) for T in [10,100,500,1000]] 
 #d_ = {'tau10':Hawkes[0][0],'data10':Hawkes[0][1]}
 #ddf = pd.DataFrame(d_,columns = ['tau10','data10'])
@@ -109,6 +185,20 @@ def phi2(x):
 #export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes20000.xlsx', index = None, header=True)
 
 
+#Hawkes_2dim = [simul_Prix_2dim(T,1.001,phi1,phi1,1.2) for T in [100,500,1000,2000]]
+d_ = {'tau100':Hawkes_2dim[0][0],'data100':Hawkes_2dim[0][1]}
+ddf = pd.DataFrame(d_,columns = ['tau100','data100'])
+export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes100.xlsx', index = None, header=True)
+d_ = {'tau500':Hawkes_2dim[1][0],'data500':Hawkes_2dim[1][1]}
+ddf = pd.DataFrame(d_,columns = ['tau500','data500'])
+export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes500.xlsx', index = None, header=True)
+d_ = {'tau1000':Hawkes_2dim[2][0],'data1000':Hawkes_2dim[2][1]}
+ddf = pd.DataFrame(d_,columns = ['tau1000','data1000'])
+export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes1000.xlsx', index = None, header=True)
+d_ = {'tau2000':Hawkes_2dim[3][0],'data2000':Hawkes_2dim[3][1]}
+ddf = pd.DataFrame(d_,columns = ['tau2000','data2000'])
+export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes2000.xlsx', index = None, header=True)
+
 
 # Ici on va plot la volatilité historique des trajectoires de prix microscopique qu'on a obtenu, afin d'observer une convergence
 # vers une vol Rough Heston (trajectoires "rough" avec clusters et retour à la moyenne) + l'effet de levier
@@ -122,19 +212,19 @@ def plot_vol_Hawkes(T):
     x = df[:,1]
     x -= np.min(x)
     x += 1
-    y = (x[1:]/x[:-1] - 1)
-    #y = x
+    #y = (x[1:]/x[:-1] - 1)
+    y = x
     sigm = []
+    y_barre = np.mean(y)
     for i in range(9,len(y)): # on prend une fenêtre glissante de 10 sauts
-        y_barre = np.mean(y[i-9:i+1])
         sigm.append((1/9)*np.sum((y[i-9:i+1] - y_barre)**2))
     sigm = np.sqrt(sigm)/np.sqrt(T)
-    t = tau_[10:]
+    t = tau_[9:]
     plt.figure()
     plt.title("T = " + str(T))
     plt.xlabel("t")
     plt.plot(t,sigm)
-    plt.plot(t,x[10:]/np.sqrt(T))
+    plt.plot(t,x[9:]/np.sqrt(T))
     plt.plot(t,np.mean(sigm)*np.ones(len(t)))
     plt.legend(["Vol","Stock","Vol mean"])
     plt.show()

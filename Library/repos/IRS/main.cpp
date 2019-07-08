@@ -174,7 +174,6 @@ SpreadCurve(string nom,
 		for (int i = 0; i < 1; i++)
 		{
 			getline(data, contenu);
-
 		}
 		while (getline(data, contenu))
 		{

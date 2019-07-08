@@ -1,4 +1,4 @@
-import numpy as np
+﻿import numpy as np
 from scipy.special import gamma
 from matplotlib import pyplot as plt
 import scipy.integrate as integrate
@@ -143,9 +143,9 @@ def plot_fBM3(H,T,Nmax,n):
 # Morceau de code pour plot des données de vol réalisée :
 
 def plot_log_vol():
-    os.chdir('C:\\Users\lroussel\Documents\Données Reuters') 
-    data_ = ['AXA_vol','DAX_vol','SPX_vol','US_10Y_vol','Swap_EUR3M1Y_vol','FOAT_vol','Gold_vol','CornFuture_vol','PowerFr_vol']
-    H = [0.54,0.44,0.56,0.48,0.49,0.33,0.37,0.49,0.43] # Ces approximations de H ont été trouvées avec le code "Graphiques_python.py" selon la
+    os.chdir('C:\\Users\lroussel\Documents\GitHub\Awa_Stages\Data Excel') 
+    data_ = ['AXA_vol','Facebook_vol','US_10Y_vol','FOAT_vol','Gold_vol','CornFuture_vol']
+    H = [0.22,0.26,0.32,0.27,0.27,0.29] # Ces approximations de H ont été trouvées avec le code "Graphiques_python.py" selon la
     k_ = len(data_)                                    # méthode habituelle (régressions linéaires)
     df = []
     plt.figure()
@@ -155,8 +155,8 @@ def plot_log_vol():
         df.append(tmp_)
         df[i] = np.array(df[i])[1:]
         df[i] = [float(z) for z in df[i]]
-        df[i] = np.log(np.flip(df[i]))
-        j = 331 + i
+        df[i] = np.flip(df[i])
+        j = 321 + i
         plt.subplot(j)
         plt.title(data_[i] + ". H = " + str(H[i]))
         plt.plot(df[i])

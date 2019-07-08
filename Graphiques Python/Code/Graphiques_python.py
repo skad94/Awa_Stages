@@ -4,12 +4,12 @@ from matplotlib import pyplot as plt
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-os.chdir('C:\\Users\lroussel\Documents\Données Reuters') # Change this
+os.chdir('C:\\Users\lroussel\Documents\GitHub\Awa_Stages\Data Excel') # Change this
 
 
 # Extract data :
 
-data_ = 'FOAT_vol'
+data_ = 'Facebook_vol'
 df = pd.read_excel(data_ + ".xlsx", index_col=None, header=None) # Reading the Excel file
 aa = np.flip(np.array(df)[1:])
 n = len(aa)
@@ -40,7 +40,6 @@ def regr():
     plt.ylabel("log(m(q,delta))")
     plt.title(data_ + " : log(m(q,delta)) en fonction de log(delta)")
     plt.legend(["q = "+ str(q) for q in q_])
-
     # We do a linear regression for each q
     x_ = x.reshape(-1,1)
     reg = [LinearRegression().fit(x_,y[i]) for i in range(N)]
@@ -48,7 +47,7 @@ def regr():
     print("scores = " + str(scores))
     coefs = [reg[i].coef_ for i in range(N)] # We get the slope for each q
     #print(np.exp(reg[N-1].intercept_/2))   # estimation of the parameter "nu"
-	reg_pente = LinearRegression().fit(q_.reshape(-1,1),coefs) # Linear regression for the slope as a function of q
+    reg_pente = LinearRegression().fit(q_.reshape(-1,1),coefs) # Linear regression for the slope as a function of q
     plt.figure(2)                                              # The slope we will get here corresponds to the Hurst exponent H
     plt.plot(q_,coefs,'o')
     plt.plot(q_,np.dot(q_.reshape(-1,1),reg_pente.coef_) + reg_pente.intercept_)
@@ -93,8 +92,8 @@ def regr_skew():
     for i in range(n2-1):
         skew[:,i] = (values[:,i+1] - values[:,i])/(logMoneyness[i+1] - logMoneyness[i])
     skew = skew[:,9] # get ATM skew
-    logMaturity = np.log(maturities)
-    logSkew = np.log(np.abs(skew))
+    logMaturity = np.log(maturities)[:8]
+    logSkew = np.log(np.abs(skew))[:8]
     reg_skew = LinearRegression().fit(logMaturity.reshape(-1,1),logSkew)
     plt.figure(1)
     plt.plot(np.exp(logMaturity),np.exp(logSkew),'o')

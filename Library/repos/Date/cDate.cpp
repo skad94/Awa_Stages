@@ -101,6 +101,29 @@ cDate::operator-=(const cPeriod& period)
 	}
 	else //Case where the difference between days is positive, there is nothing more to do
 		_day = dayDiff;
+	if ((_month == 4 || _month == 6 || _month == 9 || _month == 11) && _day == 31)
+	{
+		_day = 1;
+		_month += 1;
+	}
+	if (_month == 2)
+	{
+		if ((IsLeapYear(_year) && _day == 30) || (!IsLeapYear(_year) && _day == 29))
+		{
+			_day = 1;
+			_month += 1;
+		}
+		if ((IsLeapYear(_year) && _day == 31) || (!IsLeapYear(_year) && _day == 30))
+		{
+			_day = 2;
+			_month += 1;
+		}
+		if (!IsLeapYear(_year) && _day == 31)
+		{
+			_day = 3;
+			_month += 1;
+		}
+	}
 	return *this;
 }
 
@@ -201,4 +224,31 @@ cDate::WhatDayIsIt() const
 	return ((date + 5) % 7) + 1;
 }
 
-
+cPeriod 
+cDate::minus(const cDate& date, const eConvention& convention) const
+{// date1 - date2 = period
+	int year = _year - date._year;
+	int month = _month - date._month;
+	if (month < 0)
+	{
+		year -= 1;
+		month += 12;
+	}
+	int day = _day - date._day;
+	if (day < 0)
+	{
+		month -= 1;
+		if (_month == 4 || _month == 6 || _month == 9 || _month == 11)
+			day += 30;
+		else if (_month == 2)
+		{
+			if (IsLeapYear(_year))
+				day += 29;
+			else
+				day += 28;
+		}
+		else
+			day += 31;
+	}
+	return cPeriod(day, month, year, convention);
+}

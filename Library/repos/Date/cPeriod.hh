@@ -3,18 +3,17 @@
 
 #include "cDate.hh"
 
-enum eConvention { conv_30_360, conv_30_365, conv_ACT_ACT };
-
 class cPeriod : public cDate
 {
 private:
-	eConvention _convention;
+	eConvention _convention; //Day count convention
 
 public:
 	cPeriod();
 	cPeriod(const int& day, const int& month, const int& year, const eConvention& convention);
 	cPeriod(const cPeriod& period);
 	bool IsValid() const override;
+	double ConvertToDayFraction() const;
 
 };
 

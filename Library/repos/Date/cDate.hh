@@ -31,6 +31,7 @@ class cDate
 		cDate operator+(const cPeriod& period) const;
 		bool operator<(const cDate& d1) const;
 		int WhatDayIsIt() const;
+		cPeriod minus(const cDate& date, const eConvention& convention) const;
 
 };
 

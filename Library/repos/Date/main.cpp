@@ -6,6 +6,19 @@
 #include <iostream>
 using namespace std;
 
+void primes(int N)
+{
+	for (int i = 2; i <= N; i++)
+	{
+		int j;
+		for (j = 2; j < (int) sqrt(i) + 1; j++)
+		{
+			if (i % j == 0) break;
+		}
+		if (j == (int) sqrt(i) + 1) cout << i << endl;
+	}
+}
+
 
 
 int main()
@@ -48,6 +61,7 @@ int main()
 	cout << floatingLeg.PriceLeg() * notional << endl;
 	cout << fixedLeg.PriceLeg() * notional << endl;
 	cout << swap.Price_IRS() * notional << endl;
+	primes(100);
 	//double frac = (cDate(3, 7, 2023).minus(cDate(27, 6, 2019), conv_30_360)).ConvertToDayFraction();
 	//cout << ZC(Interpolation(frac, discount), frac) << endl;
 }

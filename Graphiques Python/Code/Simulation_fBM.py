@@ -116,7 +116,7 @@ def fBM3(H,T,Nmax,n): # simulation des trajectoires par "series expansion"
             res += tmp*(my_sin(i*dt,k,T)*N[2*k] + (1 - my_cos(i*dt,k,T))*N[2*k-1])
         fW[i] = res
     return fW
-        
+
 def plot_fBM3(H,T,Nmax,n):
     dt = T/n
     fBMs = [fBM3(h,T,Nmax,n) for h in H]

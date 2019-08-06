@@ -1,5 +1,7 @@
 #define _USE_MATH_DEFINES 
 #include "Functions.hh"
+#include <iostream>
+using namespace std;
 
 double 
 IntegrateForSeriesExpansionMethod(
@@ -168,6 +170,21 @@ StandardBM(int numTimeSteps, const unique_ptr<cSquareMatrix>& sigma)
 }
 
 double 
+BlackScholesCallPrice(
+	double maturity,
+	double strike,
+	double volatility,
+	double shortRate,
+	double S0)
+{//Black Scholes formula for a call option
+	double d1 = (log(S0 / strike) + (shortRate + volatility * volatility / 2) * maturity) /
+		(volatility * sqrt(maturity));
+	double d2 = d1 - volatility * sqrt(maturity);
+	return S0 * (erfc(-d1 / sqrt(2)) / 2) - 
+		strike * exp(-shortRate * maturity) * (erfc(-d2 / sqrt(2)) / 2);
+}
+
+double
 DiffusionRoughHeston(
 	int numTimeSteps, 
 	double maturity, 
@@ -284,7 +301,7 @@ Trajectory_Wtilde_and_Z(int numTimeSteps, const unique_ptr<cSquareMatrix>& sigma
 	return res;
 }
 
-double 
+double
 DiffusionRoughBergomi(
 	int numTimeSteps,
 	double maturity,
@@ -313,3 +330,279 @@ DiffusionRoughBergomi(
 	ExportData(S_memory, name);
 	return S;
 }
+
+double 
+MonteCarlo_rBergomi_Call(
+	int numMonteCarloSimulations,
+	int numTimeSteps,
+	double maturity,
+	double S0,
+	double v0,
+	double eta,
+	const unique_ptr<cSquareMatrix>& sigma,
+	double strike,
+	double shortRate)
+{
+	double alpha = 5.0 / 100; //for confidence interval
+	double res = 0;
+	double variance = 0;
+	vector<double> payoffSimulationTab(numMonteCarloSimulations, 0);
+	for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		double tmp = fmax(DiffusionRoughBergomi(numTimeSteps, maturity, S0, v0, eta, sigma) - strike, 0)
+			* exp(-shortRate * maturity);
+		res += tmp;
+		payoffSimulationTab[i] = tmp;
+	}
+	res /= numMonteCarloSimulations;
+	for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		variance += pow(payoffSimulationTab[i] - res, 2);
+	}
+	variance /= (numMonteCarloSimulations - 1.0);
+	//show confidence interval with alpha = 5%
+	cout << "Confidence Interval : [" << res - sqrt(variance / numMonteCarloSimulations) * 1.96
+		<< ", " << res + sqrt(variance / numMonteCarloSimulations) * 1.96 << "]" << endl;
+	return res;
+}
+
+double 
+Weight_LiftedHeston(int n, int i, double rn, double H)
+{//Returns the weight coefficient c_i_n in the Lifted Heston model
+	double alpha = H + 0.5;
+	return (pow(rn, 1 - alpha) - 1) * pow(rn, (alpha - 1) * (1 + n / 2.0)) * pow(rn, (1 - alpha) * i) / 
+		(tgamma(alpha) * tgamma(2 - alpha));
+}
+
+double 
+ReversionSpeed_LiftedHeston(int n, int i, double rn, double H)
+{//Returns the reversion speed coefficient x_i_n in the Lifted Heston model
+	double alpha = H + 0.5;
+	return (1 - alpha) * (pow(rn, 2 - alpha) - 1) * pow(rn, i - 1.0 - n / 2.0) / 
+		((2 - alpha) * (pow(rn, 1 - alpha) - 1));
+}
+
+double 
+InitialForwardVarianceCurve(double t, double V0, double theta, int n, double rn, double H)
+{//Returns the value g0(t) of the initial forward variance curve at time t
+ //V0 and theta are supposed to be calibrated using variance swaps from the market
+	double sum = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		double integralApproximate = 0;
+		double dt = t / 10;
+		for (int j = 0; j < 10; j++)
+		{
+			integralApproximate += dt * exp(-ReversionSpeed_LiftedHeston(n, i, rn, H) * (t - j * dt));
+		}
+		sum += integralApproximate * Weight_LiftedHeston(n, i, rn, H);
+	}
+	sum *= theta;
+	return V0 + sum;
+}
+
+double DiffusionLiftedHeston(
+	int numTimeSteps,
+	double maturity,
+	int n, //number of factors
+	double rn,
+	double S0, //stock price at time 0
+	double V0, //variance at time 0
+	double theta,
+	double rho,
+	double nu,
+	double lambda,
+	double H,
+	const unique_ptr<cSquareMatrix>& sigma) //volatility matrix for standard brownian motion
+{//Returns the approximate for the asset price S at maturity date in the Lifted Heston model using the 
+ //"explicit-implicit" scheme.
+	double dt = maturity / numTimeSteps;
+	double V = V0; //current variance
+	double S = S0; //current stock price
+	const unique_ptr<vector<double>> & W(StandardBM(numTimeSteps, sigma));
+	const unique_ptr<vector<double>> & W_orthogonal(StandardBM(numTimeSteps, sigma));
+	const unique_ptr<vector<double>> & B(*(rho * (*W)) + *(sqrt(1 - rho * rho) * (*W_orthogonal)));
+	unique_ptr<vector<double>> U(new vector<double>(n, 0)); //U_1_t, ..., U_n_t
+	unique_ptr<vector<double>> V_memory(new vector<double>);
+	unique_ptr<vector<double>> S_memory(new vector<double>);
+	V_memory->push_back(V);
+	S_memory->push_back(S);
+	for (size_t i = 0; i < numTimeSteps; i++)
+	{
+		for (size_t j = 1; j <= n; j++)
+		{
+			(*U)[j - 1] = ((*U)[j - 1] - lambda * fmax(V, 0) * dt + nu * sqrt(fmax(V, 0)) *
+				((*W)[i + 1] - (*W)[i])) / (1 + ReversionSpeed_LiftedHeston(n, j, rn, H) * dt);
+		}
+		V = InitialForwardVarianceCurve(i * dt, V0, theta, n, rn, H);
+		for (size_t j = 1; j <= n; j++)
+		{
+			V += Weight_LiftedHeston(n, j, rn, H) * (*U)[j - 1];
+		}
+		S *= (1 + sqrt(fmax(V, 0)) * ((*B)[i + 1] - (*B)[i]));
+		//cout << V << endl;
+		V_memory->push_back(V);
+		S_memory->push_back(S);
+	}
+	string name = "LiftedHestonPrice.txt"; //We export the stock price trajectory
+	ExportData(S_memory, name);
+	return S;
+}
+
+unique_ptr<vector<double>> 
+CalibrateLiftedHeston(
+	const unique_ptr<vector<double>>& marketPrices,
+	const unique_ptr<vector<double>>& maturities,
+	const unique_ptr<vector<double>>& strikes,
+	string financialProduct,
+	int numMonteCarloSimulations,
+	int numTimeSteps,
+	const unique_ptr<cSquareMatrix>& sigma,
+	double shortRate)
+{//Approximate optimal parameters for the Lifted Heston model
+	double min = 0;
+	double rho_opti = -1;
+	double H_opti = 0.05;
+	double theta_opti = 0.01;
+	double lambda_opti = 0.1;
+	double nu_opti = 0.1;
+	double V0_opti = 0.01;
+	for (double rho = -1; rho <= 1; rho += 1)
+		for (double H = 0.05; H <= 0.25; H += 0.1)
+			for (double theta = 0.01; theta <= 0.05; theta += 0.02)
+				for (double lambda = 0.1; lambda <= 0.5; lambda += 0.2)
+					for (double nu = 0.1; nu <= 0.5; nu += 0.2)
+						for (double V0 = 0.01; V0 <= 0.05; V0 += 0.02)
+						{
+							double sum = 0;
+							for (int i = 0; i < maturities->size(); i++)
+								for (int j = 0; j < strikes->size(); j++)
+								{
+									int k = i * strikes->size() + j;
+									sum += pow((*marketPrices)[k] - MonteCarlo_pricing(
+										financialProduct, "LiftedHeston", numMonteCarloSimulations,
+										numTimeSteps, (*maturities)[i], sigma, (*strikes)[j],
+										shortRate), 2);
+								}
+							if (sum < min || min == 0)
+							{
+								min = sum;
+								rho_opti = rho;
+								theta_opti = theta;
+								H_opti = H;
+								lambda_opti = lambda;
+								nu_opti = nu;
+								V0_opti = V0;
+							}
+						}
+	return unique_ptr<vector<double>>(new vector<double>
+		{ V0_opti,theta_opti,lambda_opti,nu_opti,rho_opti,H_opti });
+}
+
+double 
+ImplicitVolLiftedHeston(
+	double LiftedHestonPrice,
+	double maturity,
+	double strike,
+	double shortRate)
+{//Returns an approximate for the volatility in the BS model which matches the Lifted Heston call price
+	double x = 0;
+	double y = 1;
+	for (int i = 0; i < 100; i++)
+	{
+		double z = (x + y) / 2;
+		double BlackScholesPrice = BlackScholesCallPrice(maturity, strike, z / (1 - z), shortRate, 2930);
+		if (LiftedHestonPrice > BlackScholesPrice)
+			x = z;
+		else
+			y = z;
+	}
+	//cout << LiftedHestonPrice << endl;
+	double z = (x + y) / 2;
+	//cout << BlackScholesCallPrice(maturity, strike, z / (1 - z), shortRate, 2930) << endl;
+	//cout << z / (1 - z) << endl;
+	return z / (1 - z);
+}
+
+unique_ptr<vector<double>> 
+GenerateVolSurf_LiftedHeston(
+	double shortRate,
+	const unique_ptr<cSquareMatrix>& sigma)
+{//Generate volatility surface from the Lifted Heston model
+ //The result contains a vector as : sigma(T1,K1), ... ,sigma(T1,Kn),sigma(T2,K1), ...... ,sigma(Tn,Kn)
+ //There are 24 maturities ans 19 strikes
+	unique_ptr<vector<double>> volSurface(new vector<double>(19 * 24, 0));
+	size_t i;
+	size_t j;
+	vector<double> maturity{ 1.0 / 12, 2.0 / 12, 3.0 / 12, 4.0 / 12, 5.0 / 12, 6.0 / 12,
+		7.0 / 12, 8.0 / 12, 9.0 / 12, 10.0 / 12, 11.0 / 12, 12.0 / 12, 13.0 / 12, 14.0 / 12,
+		15.0 / 12, 16.0 / 12, 17.0 / 12, 18.0 / 12, 19.0 / 12, 20.0 / 12, 21.0 / 12,
+		22.0 / 12, 23.0 / 12, 24.0 / 12 };
+	vector<double> strike{ 5.0 * 2930 / 10, 6.0 * 2930 / 10, 7.0 * 2930 / 10, 7.5 * 2930 / 10,
+		8.0 * 2930 / 10, 8.5 * 2930 / 10, 9.0 * 2930 / 10, 9.5 * 2930 / 10, 9.75 * 2930 / 10,
+		10.0 * 2930 / 10, 10.25 * 2930 / 10, 10.5 * 2930 / 10, 11.0 * 2930 / 10,
+		11.5 * 2930 / 10, 12.0 * 2930 / 10, 12.5 * 2930 / 10, 13.0 * 2930 / 10, 14.0 * 2930 / 10,
+		15.0 * 2930 / 10 };
+	for (i = 0; i < 24; i++)
+	{
+		for (j = 0; j < 19; j++)
+		{
+			double LiftedHestonPrice = MonteCarlo_pricing("Call", "LiftedHeston",
+				120, 15, maturity[i], sigma, strike[j], shortRate);
+			//cout << "(" << maturity[i] << ", " << strike[j] << ") " <<
+				//"LiftedPrice : " << LiftedHestonPrice << endl;
+			(*volSurface)[i * 19 + j] = ImplicitVolLiftedHeston(LiftedHestonPrice,
+				maturity[i], strike[j], shortRate);
+			//cout << (*volSurface)[i * 19 + j] << endl;
+		}
+	}
+	string name = "LiftedHestonVolSurface.txt";
+	ExportData(volSurface, name);
+	return volSurface;
+}
+
+double MonteCarlo_pricing(
+	string financialProduct,
+	string model,
+	int numMonteCarloSimulations,
+	int numTimeSteps,
+	double maturity,
+	const unique_ptr<cSquareMatrix>& sigma,
+	double strike,
+	double shortRate)
+{
+	double alpha = 5.0 / 100; //for confidence interval
+	double res = 0;
+	double variance = 0;
+	vector<double> payoffSimulationTab(numMonteCarloSimulations, 0);
+	for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		double tmp = 0;
+		if (financialProduct == "Call" && model == "rBergomi")
+			tmp = fmax(DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigma) - strike, 0) 
+			* exp(-shortRate * maturity);
+		if (financialProduct == "Put" && model == "rBergomi")
+			tmp = fmax(strike - DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigma), 0)
+			* exp(-shortRate * maturity);
+		if (financialProduct == "Call" && model == "LiftedHeston")
+			tmp = fmax(DiffusionLiftedHeston(numTimeSteps, maturity, 20, 2.5, 2930, 0.02, 0.2,
+				-0.7, 0.3, 0.3, 0.1, sigma) - strike, 0) * exp(-shortRate * maturity);
+		if (financialProduct == "Put" && model == "LiftedHeston")
+			tmp = fmax(strike - DiffusionLiftedHeston(numTimeSteps, maturity, 20, 2.5, 100, 0.02, 0.02,
+				-0.7, 0.3, 0.3, 0.1, sigma), 0) * exp(-shortRate * maturity);
+		res += tmp;
+		payoffSimulationTab[i] = tmp;
+	}
+	res /= numMonteCarloSimulations;
+	/*for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		variance += pow(payoffSimulationTab[i] - res, 2);
+	}
+	variance /= (numMonteCarloSimulations - 1.0);*/
+	//show confidence interval with alpha = 5%
+	//cout << "Confidence Interval : [" << res - sqrt(variance / numMonteCarloSimulations) * 1.96
+		//<< ", " << res + sqrt(variance / numMonteCarloSimulations) * 1.96 << "]" << endl;
+	//cout << res << endl;
+	return res;
+}
+

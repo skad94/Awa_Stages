@@ -7,6 +7,7 @@
 #include <ctime>
 #include <fstream>
 
+
 double IntegrateForSeriesExpansionMethod(double(*f)(double, double, int, double), double HurstExponent,
 	double maturityKL, int k_index_KL, double lowerBound, double upperBound);
 
@@ -32,12 +33,15 @@ void ExportData(const unique_ptr<vector<double>>& data, string fileName);
 
 unique_ptr<vector<double>> StandardBM(int numTimeSteps, const unique_ptr<cSquareMatrix>& sigma);
 
+double BlackScholesCallPrice(double maturity, double strike, double volatility, 
+	double shortRate, double S0);
+
 
 // rHeston
 
-double DiffusionRoughHeston(int numTimeSteps, double maturity, double P0, double Y0, double alpha, 
-	double lambdaStar, double mu, double beta, double C, double phi1Norm, double phi2Norm, 
-	const unique_ptr<cSquareMatrix>& sigma);
+double DiffusionRoughHeston(int numTimeSteps, double maturity, double P0, 
+	double Y0, double alpha, double lambdaStar, double mu, double beta, double C, 
+	double phi1Norm, double phi2Norm, const unique_ptr<cSquareMatrix>& sigma);
 
 
 // rBergomi
@@ -55,8 +59,42 @@ double Covariance_Wtilde_Z(double s, double t, double HurstExponent, double rho)
 
 unique_ptr<vector<double>> Trajectory_Wtilde_and_Z(int numTimeSteps, const unique_ptr<cSquareMatrix>& sigma);
 
-double DiffusionRoughBergomi(int n, double maturity, double S0, double v0, double eta,
+double DiffusionRoughBergomi(int n, double maturity, double S0, double v0,
+	double eta, const unique_ptr<cSquareMatrix>& sigma);
+
+double MonteCarlo_rBergomi_Call(int numMonteCarloSimulations, int numTimeSteps, double maturity,
+	double S0, double v0, double eta, const unique_ptr<cSquareMatrix>& sigma, 
+	double strike, double shortRate);
+
+
+// Lifted Heston
+
+double Weight_LiftedHeston(int n, int i, double rn, double H);
+
+double ReversionSpeed_LiftedHeston(int n, int i, double rn, double H);
+
+double InitialForwardVarianceCurve(double t, double V0, double theta, int n, double rn, double H);
+
+double DiffusionLiftedHeston(int numTimeSteps, double maturity, int n, double rn, double S0,
+	double V0, double theta, double rho, double nu, double lambda, double H, 
 	const unique_ptr<cSquareMatrix>& sigma);
 
+unique_ptr<vector<double>> CalibrateLiftedHeston(const unique_ptr<vector<double>>& marketPrices,
+	const unique_ptr<vector<double>>& maturities, const unique_ptr<vector<double>>& strikes,
+	string financialProduct, int numMonteCarloSimulations, int numTimeSteps,
+	const unique_ptr<cSquareMatrix>& sigma, double shortRate);
+
+double ImplicitVolLiftedHeston(double LiftedHestonPrice, double maturity, double strike, 
+	double shortRate);
+
+unique_ptr<vector<double>> GenerateVolSurf_LiftedHeston(double shortRate, 
+	const unique_ptr<cSquareMatrix>& sigma);
+
+
+// Monte Carlo pricing
+
+double MonteCarlo_pricing(string financialProduct, string model, int numMonteCarloSimulations, 
+	int numTimeSteps, double maturity, const unique_ptr<cSquareMatrix>& sigma, 
+	double strike, double shortRate);
 
 #endif

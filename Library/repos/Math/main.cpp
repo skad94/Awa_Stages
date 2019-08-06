@@ -63,24 +63,23 @@ int main()
 	
 
 
-
-	int numTimeSteps = 100;
+	int numTimeSteps = 15;
 	double maturity = 1;
 	double dt = maturity / numTimeSteps;
-	double HurstExponent = 0.3;
+	double HurstExponent = 0.1;
 	double rho = -0.5;
 
 	//rHeston
-	cSquareMatrix CovarianceStandardBM(numTimeSteps); //We fill the covariance matrix for the standard BM
+	/*cSquareMatrix CovarianceStandardBM(numTimeSteps); //We fill the covariance matrix for the standard BM
 	for (int i = 0; i < numTimeSteps; i++)
 		for (int j = 0; j < numTimeSteps; j++)
 			CovarianceStandardBM(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
 	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();
 	double stockPriceHeston = DiffusionRoughHeston(numTimeSteps, maturity,
-		100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25, sigmaStandard);
+		100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25, sigmaStandard);*/
 
 	//rBergomi
-	cSquareMatrix CovarianceMatrixBergomi(2 * numTimeSteps); //We fill the covariance matrix for Wtilde and Z
+	/*cSquareMatrix CovarianceMatrixBergomi(2 * numTimeSteps); //We fill the covariance matrix for Wtilde and Z
 	for (int i = 0; i < 2 * numTimeSteps; i++)
 		for (int j = 0; j < 2 * numTimeSteps; j++)
 			if (i < numTimeSteps && j < numTimeSteps)
@@ -90,8 +89,46 @@ int main()
 			else
 				CovarianceMatrixBergomi(i, j) = Covariance_Wtilde_Z((i + 1.) * dt, (j + 1.) * dt,
 					HurstExponent, rho);
-	unique_ptr<cSquareMatrix> sigmaBergomi = CovarianceMatrixBergomi.Cholesky();
-	double stockPriceBergomi = DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigmaBergomi);
+	unique_ptr<cSquareMatrix> sigmaBergomi = CovarianceMatrixBergomi.Cholesky();*/
+	//double stockPriceBergomi = DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigmaBergomi);
 	
+	//Monte Carlo rBergomi
+	/*double MCprice = MonteCarlo_rBergomi_Call(1000, numTimeSteps, maturity, 100, 0.005, 0.2,
+		sigmaBergomi, 95, 0.01);
+	cout << "Monte Carlo price : " << MCprice << endl;*/
+
+	//Lifted Heston
+	cSquareMatrix CovarianceStandardBM(numTimeSteps); //We fill the covariance matrix for the standard BM
+	for (int i = 0; i < numTimeSteps; i++)
+		for (int j = 0; j < numTimeSteps; j++)
+			CovarianceStandardBM(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
+	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();
+	/*double stockPriceLiftedHeston = DiffusionLiftedHeston(numTimeSteps, maturity, 20, 2.5, 10, 0.02,
+		0.02, -0.7, 0.3, 0.3, HurstExponent, sigmaStandard);
+	cout << stockPriceLiftedHeston << endl;
+	unique_ptr<vector<double>> marketPrices(new vector<double>(1, 6));
+	unique_ptr<vector<double>> maturities(new vector<double>(1, 1));
+	unique_ptr<vector<double>> strikes(new vector<double>(1, 95));
+	string financialProduct = "Call";
+	ShowVector(*CalibrateLiftedHeston(marketPrices,
+		maturities, strikes,
+		financialProduct, 10, numTimeSteps,
+		sigmaStandard, 0.01));*/
+
+	unique_ptr<vector<double>> volatilitySurface = GenerateVolSurf_LiftedHeston(
+		0, sigmaStandard);
+	ShowVector(*volatilitySurface);
+	
+	
+	
+	
+	//TEST
+	/*for (int i = 0; i < 15; i++)
+		cout << DiffusionLiftedHeston(10, 2, 20, 2.5, 2930, 0.02, 0.2,
+			-0.7, 0.3, 0.3, 0.1, sigmaStandard) << endl;*/
+
+
+
+
 
 }

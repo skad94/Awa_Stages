@@ -80,7 +80,7 @@ aa = jj[4] # Change this, putting an integer between 0 and 8
 
 def regr_skew():
     os.chdir('C:\\Users\lroussel\Documents\GitHub\Awa_Stages\Data Excel') # Change this
-    data_ = 'SPX ATM 24052019' 
+    data_ = 'LiftedHestonVolSurface' 
     df = pd.read_excel(data_ + ".xlsx")
     df = np.array(df)
     values = df[1:,1:]

@@ -508,7 +508,7 @@ ImplicitVolLiftedHeston(
 {//Returns an approximate for the volatility in the BS model which matches the Lifted Heston call price
 	double x = 0;
 	double y = 1;
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		double z = (x + y) / 2;
 		double BlackScholesPrice = BlackScholesCallPrice(maturity, strike, z / (1 - z), shortRate, 2930);
@@ -548,7 +548,7 @@ GenerateVolSurf_LiftedHeston(
 		for (j = 0; j < 19; j++)
 		{
 			double LiftedHestonPrice = MonteCarlo_pricing("Call", "LiftedHeston",
-				120, 15, maturity[i], sigma, strike[j], shortRate);
+				500, 10, maturity[i], sigma, strike[j], shortRate);
 			//cout << "(" << maturity[i] << ", " << strike[j] << ") " <<
 				//"LiftedPrice : " << LiftedHestonPrice << endl;
 			(*volSurface)[i * 19 + j] = ImplicitVolLiftedHeston(LiftedHestonPrice,
@@ -569,7 +569,9 @@ double MonteCarlo_pricing(
 	double maturity,
 	const unique_ptr<cSquareMatrix>& sigma,
 	double strike,
-	double shortRate)
+	double shortRate,
+	int n,
+	double rn)
 {
 	double alpha = 5.0 / 100; //for confidence interval
 	double res = 0;
@@ -579,17 +581,24 @@ double MonteCarlo_pricing(
 	{
 		double tmp = 0;
 		if (financialProduct == "Call" && model == "rBergomi")
-			tmp = fmax(DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigma) - strike, 0) 
+			tmp = fmax(DiffusionRoughBergomi(numTimeSteps, maturity, 2930, 0.005, 0.2, sigma) - strike, 0) 
 			* exp(-shortRate * maturity);
 		if (financialProduct == "Put" && model == "rBergomi")
-			tmp = fmax(strike - DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigma), 0)
+			tmp = fmax(strike - DiffusionRoughBergomi(numTimeSteps, maturity, 2930, 0.005, 0.2, sigma), 0)
 			* exp(-shortRate * maturity);
 		if (financialProduct == "Call" && model == "LiftedHeston")
-			tmp = fmax(DiffusionLiftedHeston(numTimeSteps, maturity, 20, 2.5, 2930, 0.02, 0.2,
+			tmp = fmax(DiffusionLiftedHeston(numTimeSteps, maturity, n, rn, 2930, 0.02, 0.02,
 				-0.7, 0.3, 0.3, 0.1, sigma) - strike, 0) * exp(-shortRate * maturity);
 		if (financialProduct == "Put" && model == "LiftedHeston")
-			tmp = fmax(strike - DiffusionLiftedHeston(numTimeSteps, maturity, 20, 2.5, 100, 0.02, 0.02,
+			tmp = fmax(strike - DiffusionLiftedHeston(numTimeSteps, maturity, n, rn, 2930, 0.02, 0.02,
 				-0.7, 0.3, 0.3, 0.1, sigma), 0) * exp(-shortRate * maturity);
+		if (financialProduct == "Call" && model == "rHeston")
+			tmp = fmax(DiffusionRoughHeston(numTimeSteps, maturity, 2930, 0.02, 0.6, tgamma(0.4) * 0.3 / 0.6,
+				0.3 * 0.6 * (1 + 0.98 * 0.98) / (0.3 * 0.3 * tgamma(0.4) * 0.02), -0.98, 1, 1, 1, sigma)
+				- strike, 0) * exp(-shortRate * maturity);
+		//if (financialProduct == "Put" && model == "rHeston")
+			//tmp = fmax(strike - DiffusionRoughHeston(numTimeSteps, maturity, 2930, 0.02, 0.6, 1, 1,
+				//1.2, 1, 0.5, 0.25, sigma), 0) * exp(-shortRate * maturity);
 		res += tmp;
 		payoffSimulationTab[i] = tmp;
 	}

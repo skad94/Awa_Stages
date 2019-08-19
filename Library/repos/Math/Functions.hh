@@ -95,6 +95,6 @@ unique_ptr<vector<double>> GenerateVolSurf_LiftedHeston(double shortRate,
 
 double MonteCarlo_pricing(string financialProduct, string model, int numMonteCarloSimulations, 
 	int numTimeSteps, double maturity, const unique_ptr<cSquareMatrix>& sigma, 
-	double strike, double shortRate);
+	double strike, double shortRate, int n = 20, double rn = 2.5);
 
 #endif

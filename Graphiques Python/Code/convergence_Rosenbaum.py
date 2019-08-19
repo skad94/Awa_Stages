@@ -153,7 +153,7 @@ def simul_Prix_2dim(T,beta,phi1,phi2,mu):
 
 
 def phi1(x):
-    return 0.005*np.exp(-2000*x)
+    return np.exp(-1000*x)
 
 def phi2(x):
     return 1/(x**0.7)
@@ -185,7 +185,7 @@ def phi2(x):
 #export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes20000.xlsx', index = None, header=True)
 
 
-#Hawkes_2dim = [simul_Prix_2dim(T,1.001,phi1,phi1,1.2) for T in [100,500,1000,2000]]
+#Hawkes_2dim = [simul_Prix_2dim(T,1.001,phi1,phi1,0.1) for T in [100,500,1000,2000]]
 d_ = {'tau100':Hawkes_2dim[0][0],'data100':Hawkes_2dim[0][1]}
 ddf = pd.DataFrame(d_,columns = ['tau100','data100'])
 export_excel = ddf.to_excel(r'C:\\Users\lroussel\Documents\Simulation_Hawkes\export_Hawkes100.xlsx', index = None, header=True)

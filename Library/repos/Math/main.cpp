@@ -63,7 +63,7 @@ int main()
 	
 
 
-	int numTimeSteps = 15;
+	int numTimeSteps = 10;
 	double maturity = 1;
 	double dt = maturity / numTimeSteps;
 	double HurstExponent = 0.1;
@@ -115,18 +115,15 @@ int main()
 		financialProduct, 10, numTimeSteps,
 		sigmaStandard, 0.01));*/
 
-	unique_ptr<vector<double>> volatilitySurface = GenerateVolSurf_LiftedHeston(
+	/*unique_ptr<vector<double>> volatilitySurface = GenerateVolSurf_LiftedHeston(
 		0, sigmaStandard);
-	ShowVector(*volatilitySurface);
+	ShowVector(*volatilitySurface);*/
 	
-	
-	
-	
-	//TEST
-	/*for (int i = 0; i < 15; i++)
-		cout << DiffusionLiftedHeston(10, 2, 20, 2.5, 2930, 0.02, 0.2,
-			-0.7, 0.3, 0.3, 0.1, sigmaStandard) << endl;*/
-
+	vector<int> nn{ 5, 20, 100, 1000, 10000 };
+	cout << MonteCarlo_pricing("Call", "rHeston", 500, 10, 1, sigmaStandard, 2900, 0) << endl;
+	for (int i = 0; i < 5; i++)
+		cout << MonteCarlo_pricing("Call", "LiftedHeston", 500, 10, 1, sigmaStandard, 2900, 0,
+			nn[i], 1.0 + 10 / pow(nn[i], 0.9)) << endl;
 
 
 

@@ -169,6 +169,21 @@ StandardBM(int numTimeSteps, const unique_ptr<cSquareMatrix>& sigma)
 	return res;
 }
 
+unique_ptr<vector<double>> 
+StandardBM_QuickMethod(int numTimeSteps, double maturity)
+{//Simulation of a standard brownian motion sample path using 
+	double sqrt_dt = sqrt(maturity / numTimeSteps);
+	default_random_engine generator(random_device{}());
+	normal_distribution<double> distribution(0, 1);
+	unique_ptr<vector<double>> res(new vector<double>((size_t)numTimeSteps + 1, 0));
+	for (size_t i = 0; i < numTimeSteps; i++)
+	{
+		double gaussian = distribution(generator);
+		(*res)[i + 1] = (*res)[i] + sqrt_dt * gaussian;
+	}
+	return res;
+}
+
 double 
 BlackScholesCallPrice(
 	double maturity,
@@ -196,11 +211,9 @@ DiffusionRoughHeston(
 	double beta,
 	double C,
 	double phi1Norm,
-	double phi2Norm,
-	const unique_ptr<cSquareMatrix>& sigma)
+	double phi2Norm)
 {//Returns the approximate for the asset price P at maturity date in the rHeston model using an Euler scheme.
- //Y0 is the variance at time 0 and P0 is the price at time 0. sigma is the volatility matrix that we get by
- //Cholesky decomposition for the standard brownian motion.
+ //Y0 is the variance at time 0 and P0 is the price at time 0.
 	double dt = maturity / numTimeSteps;
 	double Y = Y0; //current variance
 	double P = P0; //current stock price
@@ -208,8 +221,8 @@ DiffusionRoughHeston(
 	double lambda = alpha * lambdaStar / (C * tgamma(1 - alpha));
 	double C2 = lambda * sqrt((1 + beta * beta) / (lambdaStar * mu * (1 + beta)));
 	double C3 = (1 / (1 - (phi1Norm - phi2Norm))) * sqrt(2 / (1 + beta));
-	const unique_ptr<vector<double>>& B(StandardBM(numTimeSteps, sigma));
-	const unique_ptr<vector<double>>& B_orthogonal(StandardBM(numTimeSteps, sigma));
+	const unique_ptr<vector<double>>& B(StandardBM_QuickMethod(numTimeSteps, maturity));
+	const unique_ptr<vector<double>>& B_orthogonal(StandardBM_QuickMethod(numTimeSteps, maturity));
 	const unique_ptr<vector<double>>& W(*(rho * (*B)) + *(sqrt(1 - rho * rho) * (*B_orthogonal)));
 	unique_ptr<vector<double>> Y_memory(new vector<double>);
 	unique_ptr<vector<double>> P_memory(new vector<double>);
@@ -235,6 +248,82 @@ DiffusionRoughHeston(
 	string name = "rHestonPrice.txt"; //We export the stock price trajectory
 	ExportData(P_memory, name);
 	return P;
+}
+
+double
+DiffusionRoughHeston_AbiJaber(
+	int numTimeSteps,
+	double maturity,
+	double S0,
+	double V0,
+	double H,
+	double lambda,
+	double theta,
+	double nu,
+	double rho)
+{//Returns the approximate for the asset price S at maturity date in the rHeston model using an Euler scheme.
+ //V0 is the variance at time 0 and S0 is the price at time 0. This is the rHeston model as described in 
+ //Eduardo Abi Jaber's paper.
+	double dt = maturity / numTimeSteps;
+	double V = V0; //current variance
+	double S = S0; //current stock price
+	const unique_ptr<vector<double>>& B(StandardBM_QuickMethod(numTimeSteps, maturity));
+	const unique_ptr<vector<double>>& B_orthogonal(StandardBM_QuickMethod(numTimeSteps, maturity));
+	const unique_ptr<vector<double>>& W(*(rho * (*B)) + *(sqrt(1 - rho * rho) * (*B_orthogonal)));
+	unique_ptr<vector<double>> V_memory(new vector<double>);
+	unique_ptr<vector<double>> S_memory(new vector<double>);
+	V_memory->push_back(V);
+	S_memory->push_back(S);
+	size_t i;
+	for (i = 0; i < numTimeSteps; i++)
+	{
+		S *= (1 + sqrt(fmax(V, 0)) * ((*B)[i + 1] - (*B)[i]));
+		V = V0;
+		for (size_t j = 0; j <= i; j++)
+		{
+			V += dt * (1 / tgamma(H + 0.5)) * pow((i + 1 - j) * dt, H - 0.5) *
+				(lambda * (theta - (*V_memory)[j]) * dt + nu * sqrt(fmax((*V_memory)[j], 0)) *
+				((*W)[j + 1] - (*W)[j]));
+		}
+		V_memory->push_back(V);
+		S_memory->push_back(S);
+	}
+	string name = "rHestonPrice_AbiJaber.txt"; //We export the stock price trajectory
+	ExportData(S_memory, name);
+	return S;
+}
+
+unique_ptr<vector<double>> 
+VariancePath_RoughHeston_AbiJaber(
+	int numTimeSteps,
+	double maturity,
+	double V0,
+	double H,
+	double lambda,
+	double theta,
+	double nu)
+{//Returns the variance path for the asset price S in the rHeston model using an Euler scheme.
+ //V0 is the variance at time 0. This is the rHeston model as described in Eduardo Abi Jaber's paper.
+	double dt = maturity / numTimeSteps;
+	double V = V0; //current variance
+	const unique_ptr<vector<double>>& B(StandardBM_QuickMethod(numTimeSteps, maturity));
+	unique_ptr<vector<double>> V_memory(new vector<double>);
+	V_memory->push_back(V);
+	size_t i;
+	for (i = 0; i < numTimeSteps; i++)
+	{
+		V = V0;
+		for (size_t j = 0; j <= i; j++)
+		{
+			V += dt * (1 / tgamma(H + 0.5)) * pow((i + 1 - j) * dt, H - 0.5) *
+				(lambda * (theta - (*V_memory)[j]) * dt + nu * sqrt(fmax((*V_memory)[j], 0)) *
+				((*B)[j + 1] - (*B)[j]));
+		}
+		V_memory->push_back(V);
+	}
+	string name = "VariancePath_rHeston_AbiJaber.txt"; //We export the simulated variance path
+	ExportData(V_memory, name);
+	return V_memory;
 }
 
 double 
@@ -412,15 +501,14 @@ double DiffusionLiftedHeston(
 	double rho,
 	double nu,
 	double lambda,
-	double H,
-	const unique_ptr<cSquareMatrix>& sigma) //volatility matrix for standard brownian motion
+	double H)
 {//Returns the approximate for the asset price S at maturity date in the Lifted Heston model using the 
  //"explicit-implicit" scheme.
 	double dt = maturity / numTimeSteps;
 	double V = V0; //current variance
 	double S = S0; //current stock price
-	const unique_ptr<vector<double>> & W(StandardBM(numTimeSteps, sigma));
-	const unique_ptr<vector<double>> & W_orthogonal(StandardBM(numTimeSteps, sigma));
+	const unique_ptr<vector<double>> & W(StandardBM_QuickMethod(numTimeSteps, maturity));
+	const unique_ptr<vector<double>> & W_orthogonal(StandardBM_QuickMethod(numTimeSteps, maturity));
 	const unique_ptr<vector<double>> & B(*(rho * (*W)) + *(sqrt(1 - rho * rho) * (*W_orthogonal)));
 	unique_ptr<vector<double>> U(new vector<double>(n, 0)); //U_1_t, ..., U_n_t
 	unique_ptr<vector<double>> V_memory(new vector<double>);
@@ -432,14 +520,14 @@ double DiffusionLiftedHeston(
 		for (size_t j = 1; j <= n; j++)
 		{
 			(*U)[j - 1] = ((*U)[j - 1] - lambda * fmax(V, 0) * dt + nu * sqrt(fmax(V, 0)) *
-				((*W)[i + 1] - (*W)[i])) / (1 + ReversionSpeed_LiftedHeston(n, j, rn, H) * dt);
+				((*W)[i + 1] - (*W)[i])) / (1.0 + ReversionSpeed_LiftedHeston(n, j, rn, H) * dt);
 		}
 		V = InitialForwardVarianceCurve(i * dt, V0, theta, n, rn, H);
 		for (size_t j = 1; j <= n; j++)
 		{
 			V += Weight_LiftedHeston(n, j, rn, H) * (*U)[j - 1];
 		}
-		S *= (1 + sqrt(fmax(V, 0)) * ((*B)[i + 1] - (*B)[i]));
+		S *= (1.0 + (sqrt(fmax(V, 0)) * ((*B)[i + 1] - (*B)[i])));
 		//cout << V << endl;
 		V_memory->push_back(V);
 		S_memory->push_back(S);
@@ -457,7 +545,6 @@ CalibrateLiftedHeston(
 	string financialProduct,
 	int numMonteCarloSimulations,
 	int numTimeSteps,
-	const unique_ptr<cSquareMatrix>& sigma,
 	double shortRate)
 {//Approximate optimal parameters for the Lifted Heston model
 	double min = 0;
@@ -481,7 +568,7 @@ CalibrateLiftedHeston(
 									int k = i * strikes->size() + j;
 									sum += pow((*marketPrices)[k] - MonteCarlo_pricing(
 										financialProduct, "LiftedHeston", numMonteCarloSimulations,
-										numTimeSteps, (*maturities)[i], sigma, (*strikes)[j],
+										numTimeSteps, (*maturities)[i], (*strikes)[j],
 										shortRate), 2);
 								}
 							if (sum < min || min == 0)
@@ -525,9 +612,7 @@ ImplicitVolLiftedHeston(
 }
 
 unique_ptr<vector<double>> 
-GenerateVolSurf_LiftedHeston(
-	double shortRate,
-	const unique_ptr<cSquareMatrix>& sigma)
+GenerateVolSurf_LiftedHeston(double shortRate)
 {//Generate volatility surface from the Lifted Heston model
  //The result contains a vector as : sigma(T1,K1), ... ,sigma(T1,Kn),sigma(T2,K1), ...... ,sigma(Tn,Kn)
  //There are 24 maturities ans 19 strikes
@@ -548,7 +633,7 @@ GenerateVolSurf_LiftedHeston(
 		for (j = 0; j < 19; j++)
 		{
 			double LiftedHestonPrice = MonteCarlo_pricing("Call", "LiftedHeston",
-				500, 10, maturity[i], sigma, strike[j], shortRate);
+				500, 10, maturity[i], strike[j], shortRate);
 			//cout << "(" << maturity[i] << ", " << strike[j] << ") " <<
 				//"LiftedPrice : " << LiftedHestonPrice << endl;
 			(*volSurface)[i * 19 + j] = ImplicitVolLiftedHeston(LiftedHestonPrice,
@@ -561,17 +646,18 @@ GenerateVolSurf_LiftedHeston(
 	return volSurface;
 }
 
-double MonteCarlo_pricing(
+double 
+MonteCarlo_pricing(
 	string financialProduct,
 	string model,
 	int numMonteCarloSimulations,
 	int numTimeSteps,
 	double maturity,
-	const unique_ptr<cSquareMatrix>& sigma,
 	double strike,
 	double shortRate,
 	int n,
-	double rn)
+	double rn,
+	const unique_ptr<cSquareMatrix>& sigma)
 {
 	double alpha = 5.0 / 100; //for confidence interval
 	double res = 0;
@@ -588,17 +674,19 @@ double MonteCarlo_pricing(
 			* exp(-shortRate * maturity);
 		if (financialProduct == "Call" && model == "LiftedHeston")
 			tmp = fmax(DiffusionLiftedHeston(numTimeSteps, maturity, n, rn, 2930, 0.02, 0.02,
-				-0.7, 0.3, 0.3, 0.1, sigma) - strike, 0) * exp(-shortRate * maturity);
+				-0.7, 0.3, 0.3, 0.1) - strike, 0) * exp(-shortRate * maturity);
 		if (financialProduct == "Put" && model == "LiftedHeston")
 			tmp = fmax(strike - DiffusionLiftedHeston(numTimeSteps, maturity, n, rn, 2930, 0.02, 0.02,
-				-0.7, 0.3, 0.3, 0.1, sigma), 0) * exp(-shortRate * maturity);
+				-0.7, 0.3, 0.3, 0.1), 0) * exp(-shortRate * maturity);
 		if (financialProduct == "Call" && model == "rHeston")
-			tmp = fmax(DiffusionRoughHeston(numTimeSteps, maturity, 2930, 0.02, 0.6, tgamma(0.4) * 0.3 / 0.6,
-				0.3 * 0.6 * (1 + 0.98 * 0.98) / (0.3 * 0.3 * tgamma(0.4) * 0.02), -0.98, 1, 1, 1, sigma)
-				- strike, 0) * exp(-shortRate * maturity);
-		//if (financialProduct == "Put" && model == "rHeston")
-			//tmp = fmax(strike - DiffusionRoughHeston(numTimeSteps, maturity, 2930, 0.02, 0.6, 1, 1,
-				//1.2, 1, 0.5, 0.25, sigma), 0) * exp(-shortRate * maturity);
+		{
+			tmp = fmax(DiffusionRoughHeston_AbiJaber(numTimeSteps, maturity, 2930, 0.02, 0.1, 0.3, 0.02,
+				0.3, -0.7) - strike, 0) * exp(-shortRate * maturity);
+			//cout << "tmp : " << tmp << endl;
+		}
+		if (financialProduct == "Put" && model == "rHeston")
+			tmp = fmax(strike - DiffusionRoughHeston_AbiJaber(numTimeSteps, maturity, 2930, 0.02, 0.1,
+				0.3, 0.02, 0.3, -0.7), 0) * exp(-shortRate * maturity);
 		res += tmp;
 		payoffSimulationTab[i] = tmp;
 	}
@@ -615,3 +703,62 @@ double MonteCarlo_pricing(
 	return res;
 }
 
+double 
+VarianceDerivatives_pricing_rHeston(
+	string financialProduct, //"VarianceSwap" for a variance swap
+							 //"Call" for a Call option on realized variance (the integral of the variance)
+							 //"Put" for a Put option on realized variance (the integral of the variance) 
+	int numMonteCarloSimulations, 
+	int numTimeSteps,
+	double maturity,
+	double V0,        //variance at time 0
+	double H,         //Hurst exponent
+	double lambda,    //mean reversion speed
+	double theta,     //long-term mean
+	double nu,        //"vol of vol"
+	double strike,    //volatility strike sometimes denoted "sigma_K"
+	double shortRate)
+{//Variance derivatives pricing by Monte Carlo using the rough Heston model given in Abi Jaber's paper
+	double alpha = 5.0 / 100; //for confidence interval
+	double res = 0;
+	double variance = 0;
+	double squared_strike = strike * strike;
+	vector<double> payoffSimulationTab(numMonteCarloSimulations, 0);
+	for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		unique_ptr<vector<double>> tmp = 
+			VariancePath_RoughHeston_AbiJaber(numTimeSteps, maturity, V0, H, lambda, theta, nu);
+		double tmp_mean = 0;
+		for (int j = 0; j < tmp->size() - 1; j++)
+			tmp_mean += (*tmp)[j];
+		tmp_mean /= (tmp->size() - 1.0);
+		double discounted_payoff = 0;
+		if (financialProduct == "VarianceSwap")
+		{
+			discounted_payoff = (tmp_mean - squared_strike) * exp(-shortRate * maturity);
+		}
+		if (financialProduct == "Call")
+		{
+			discounted_payoff = fmax(maturity * tmp_mean - squared_strike, 0)
+				* exp(-shortRate * maturity);
+		}
+		if (financialProduct == "Put")
+		{
+			discounted_payoff = fmax(squared_strike - maturity * tmp_mean, 0)
+				* exp(-shortRate * maturity);
+		}
+		res += discounted_payoff;
+		payoffSimulationTab[i] = discounted_payoff;
+	}
+	res /= numMonteCarloSimulations;
+	/*for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		variance += pow(payoffSimulationTab[i] - res, 2);
+	}
+	variance /= (numMonteCarloSimulations - 1.0);*/
+	//show confidence interval with alpha = 5%
+	//cout << "Confidence Interval : [" << res - sqrt(variance / numMonteCarloSimulations) * 1.96
+		//<< ", " << res + sqrt(variance / numMonteCarloSimulations) * 1.96 << "]" << endl;
+	//cout << res << endl;
+	return res;
+}

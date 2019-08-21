@@ -7,26 +7,17 @@ os.chdir('C:\\Users\\lroussel\\Documents\\GitHub\\Awa_Stages\\Library\\repos\\Ma
 
 # Plotting a FBM sample path which was generated using C++ :
 
-dataCholesky03 = 'SimulationFBM_Cholesky_03.txt' 
-dataCholesky08 = 'SimulationFBM_Cholesky_08.txt'
-dataKL03 = 'SimulationFBM_KL_03.txt'
-dataKL08 = 'SimulationFBM_KL_08.txt'
-data_rHeston = 'rHestonPrice.txt'
-data_rBergomi = 'rBergomiPrice.txt'
-fHeston = open(data_rHeston, 'r+')
-fBergomi = open(data_rBergomi, 'r+')
-path_Heston = fHeston.read().split(',')[:-1]
-path_Bergomi = fBergomi.read().split(',')[:-1]
-fHeston.close()
-fBergomi.close()
-path_Heston = np.array(path_Heston).astype(np.float)
-path_Bergomi = np.array(path_Bergomi).astype(np.float)
+dataLiftedHeston = 'LiftedHestonPrice.txt' 
+
+fLiftedHeston = open(dataLiftedHeston, 'r+')
+pathLiftedHeston = fLiftedHeston.read().split(',')[:-1]
+fLiftedHeston.close()
+pathLiftedHeston = np.array(pathLiftedHeston).astype(np.float)
 plt.figure()
-plt.plot(path_Heston)
-plt.plot(path_Bergomi)
-plt.title("Trajectoire du sous-jacent pour les modèles rHeston et rBergomi")
+plt.plot(pathLiftedHeston)
+plt.title("Trajectoire du sous-jacent pour le modèle Lifted Heston")
 plt.xlabel('t')
 plt.ylabel('S')
-plt.legend(['rHeston','rBergomi'])
+#plt.legend(['rHeston','rBergomi'])
 plt.show()
 

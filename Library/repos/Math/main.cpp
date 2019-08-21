@@ -57,26 +57,26 @@ int main()
 	ExportData(v3, name3);
 	ExportData(v4, name4);*/
 
-
-
-	//unique_ptr<cSquareMatrix> ;
 	
 
 
-	int numTimeSteps = 10;
-	double maturity = 1;
+	int numTimeSteps = 50;
+	double maturity = 1.0 / 12;
+	int numSimulationsMC = 100;
 	double dt = maturity / numTimeSteps;
-	double HurstExponent = 0.1;
-	double rho = -0.5;
+	//double HurstExponent = 0.1;
+	//double rho = -0.5;
 
-	//rHeston
-	/*cSquareMatrix CovarianceStandardBM(numTimeSteps); //We fill the covariance matrix for the standard BM
+	//Fill the covariance matrix for the standard BM, if needed ...
+	/*cSquareMatrix CovarianceStandardBM(numTimeSteps);
 	for (int i = 0; i < numTimeSteps; i++)
 		for (int j = 0; j < numTimeSteps; j++)
 			CovarianceStandardBM(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
-	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();
-	double stockPriceHeston = DiffusionRoughHeston(numTimeSteps, maturity,
-		100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25, sigmaStandard);*/
+	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();*/
+
+	//rHeston
+	/*double stockPriceHeston = DiffusionRoughHeston(numTimeSteps, maturity, 
+		100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25);*/
 
 	//rBergomi
 	/*cSquareMatrix CovarianceMatrixBergomi(2 * numTimeSteps); //We fill the covariance matrix for Wtilde and Z
@@ -98,13 +98,8 @@ int main()
 	cout << "Monte Carlo price : " << MCprice << endl;*/
 
 	//Lifted Heston
-	cSquareMatrix CovarianceStandardBM(numTimeSteps); //We fill the covariance matrix for the standard BM
-	for (int i = 0; i < numTimeSteps; i++)
-		for (int j = 0; j < numTimeSteps; j++)
-			CovarianceStandardBM(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
-	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();
 	/*double stockPriceLiftedHeston = DiffusionLiftedHeston(numTimeSteps, maturity, 20, 2.5, 10, 0.02,
-		0.02, -0.7, 0.3, 0.3, HurstExponent, sigmaStandard);
+		0.02, -0.7, 0.3, 0.3, HurstExponent);
 	cout << stockPriceLiftedHeston << endl;
 	unique_ptr<vector<double>> marketPrices(new vector<double>(1, 6));
 	unique_ptr<vector<double>> maturities(new vector<double>(1, 1));
@@ -112,18 +107,27 @@ int main()
 	string financialProduct = "Call";
 	ShowVector(*CalibrateLiftedHeston(marketPrices,
 		maturities, strikes,
-		financialProduct, 10, numTimeSteps,
-		sigmaStandard, 0.01));*/
-
-	/*unique_ptr<vector<double>> volatilitySurface = GenerateVolSurf_LiftedHeston(
-		0, sigmaStandard);
+		financialProduct, 10, numTimeSteps, 0.01));*/
+	/*unique_ptr<vector<double>> volatilitySurface = GenerateVolSurf_LiftedHeston(0);
 	ShowVector(*volatilitySurface);*/
-	
-	vector<int> nn{ 5, 20, 100, 1000, 10000 };
-	cout << MonteCarlo_pricing("Call", "rHeston", 500, 10, 1, sigmaStandard, 2900, 0) << endl;
-	for (int i = 0; i < 5; i++)
-		cout << MonteCarlo_pricing("Call", "LiftedHeston", 500, 10, 1, sigmaStandard, 2900, 0,
-			nn[i], 1.0 + 10 / pow(nn[i], 0.9)) << endl;
+	/*cout << BlackScholesCallPrice(maturity, 2900, sqrt(0.02), 0, 2930) << endl;
+	vector<int> nn{ 10, 50, 100, 1000 };
+	cout << MonteCarlo_pricing("Call", "rHeston", numSimulationsMC, numTimeSteps, maturity, 
+		2900, 0) << "\n" << endl;
+	for (int i = 0; i < nn.size(); i++)
+		cout << MonteCarlo_pricing("Call", "LiftedHeston", numSimulationsMC, numTimeSteps, maturity, 
+			2900, 0, nn[i], 1.0 + 10 / pow(nn[i], 0.9)) << endl;*/
+
+	//Variance swap pricing
+	cout << VarianceDerivatives_pricing_rHeston("VarianceSwap", numSimulationsMC, numTimeSteps, maturity, 
+		0.02, 0.1, 0.3, 0.02, 0.3, 0.1414, 0) << endl; //sqrt(0.02) ~ 0.1414 so sigma_0 ~ sigma_K 
+	                                                   //(where sigma_K = strike)
+	cout << VarianceDerivatives_pricing_rHeston("Call", numSimulationsMC, numTimeSteps, maturity,
+		0.02, 0.1, 0.3, 0.02, 0.3, 0.1414* sqrt(maturity), 0) << endl;
+	cout << VarianceDerivatives_pricing_rHeston("Put", numSimulationsMC, numTimeSteps, maturity,
+		0.02, 0.1, 0.3, 0.02, 0.3, 0.1414* sqrt(maturity), 0) << endl;
+
+
 
 
 

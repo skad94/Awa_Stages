@@ -316,7 +316,7 @@ VariancePath_RoughHeston_AbiJaber(
 		for (size_t j = 0; j <= i; j++)
 		{
 			V += dt * (1 / tgamma(H + 0.5)) * pow((i + 1 - j) * dt, H - 0.5) *
-				(lambda * (theta - (*V_memory)[j]) * dt + nu * sqrt(fmax((*V_memory)[j], 0)) *
+				(lambda * (theta - fmax((*V_memory)[j],0)) * dt + nu * sqrt(fmax((*V_memory)[j], 0)) *
 				((*B)[j + 1] - (*B)[j]));
 		}
 		V_memory->push_back(V);
@@ -324,6 +324,48 @@ VariancePath_RoughHeston_AbiJaber(
 	string name = "VariancePath_rHeston_AbiJaber.txt"; //We export the simulated variance path
 	ExportData(V_memory, name);
 	return V_memory;
+}
+
+unique_ptr<vector<double>> 
+CalibrateRoughHeston_AbiJaber(
+	double VIX,
+	const unique_ptr<vector<double>>& marketPrices,
+	const unique_ptr<vector<double>>& maturities,
+	const unique_ptr<vector<double>>& strikes,
+	string financialProduct,
+	int numMonteCarloSimulations,
+	int numTimeSteps,
+	double shortRate)
+{//Approximate optimal parameters {theta, lambda, nu} for the Rough Heston model according to VIX Calls/Puts
+	double min = 0;
+	double V0_opti = pow(VIX, 2);
+	double H_opti = 0.1;
+	double theta_opti = 0.01;
+	double lambda_opti = 0.1;
+	double nu_opti = 0.1;
+	for (double theta = 0.01; theta <= 0.05; theta += 0.005)
+		for (double lambda = 0.1; lambda <= 0.5; lambda += 0.05)
+			for (double nu = 0.1; nu <= 0.5; nu += 0.05)
+			{
+				double sum = 0;
+				for (int i = 0; i < maturities->size(); i++)
+					for (int j = 0; j < strikes->size(); j++)
+					{
+						int k = i * strikes->size() + j;
+						sum += pow((*marketPrices)[k] - VIX_options_pricing_rHeston(
+							financialProduct, numMonteCarloSimulations, numTimeSteps, (*maturities)[i],
+							V0_opti, H_opti, lambda, theta, nu, (*strikes)[j], shortRate), 2);
+					}
+				if (sum < min || min == 0)
+				{
+					min = sum;
+					theta_opti = theta;
+					lambda_opti = lambda;
+					nu_opti = nu;
+				}
+			}
+	return unique_ptr<vector<double>>(new vector<double>
+		{ theta_opti,lambda_opti,nu_opti });
 }
 
 double 
@@ -746,6 +788,55 @@ VarianceDerivatives_pricing_rHeston(
 		{
 			discounted_payoff = fmax(squared_strike - maturity * tmp_mean, 0)
 				* exp(-shortRate * maturity);
+		}
+		res += discounted_payoff;
+		payoffSimulationTab[i] = discounted_payoff;
+	}
+	res /= numMonteCarloSimulations;
+	/*for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		variance += pow(payoffSimulationTab[i] - res, 2);
+	}
+	variance /= (numMonteCarloSimulations - 1.0);*/
+	//show confidence interval with alpha = 5%
+	//cout << "Confidence Interval : [" << res - sqrt(variance / numMonteCarloSimulations) * 1.96
+		//<< ", " << res + sqrt(variance / numMonteCarloSimulations) * 1.96 << "]" << endl;
+	//cout << res << endl;
+	return res;
+}
+
+double
+VIX_options_pricing_rHeston(
+	string financialProduct,
+	int numMonteCarloSimulations,
+	int numTimeSteps,
+	double maturity,
+	double V0,         //variance at time 0
+	double H,          //Hurst exponent
+	double lambda,     //mean reversion speed
+	double theta,      //long-term mean
+	double nu,         //"vol of vol"
+	double strike,     //volatility strike sometimes denoted "sigma_K"
+	double shortRate)
+{//VIX Call and Put pricing by Monte Carlo using the rough Heston model given in Abi Jaber's paper
+	double alpha = 5.0 / 100; //for confidence interval
+	double res = 0;
+	double variance = 0;
+	vector<double> payoffSimulationTab(numMonteCarloSimulations, 0);
+	for (int i = 0; i < numMonteCarloSimulations; i++)
+	{
+		unique_ptr<vector<double>> tmp =
+			VariancePath_RoughHeston_AbiJaber(numTimeSteps, maturity, V0, H, lambda, theta, nu);
+		double terminal_value = sqrt((*tmp)[tmp->size() - 1]); //we get terminal value of volatility
+		//cout << "VOL_T = " << terminal_value << endl;
+		double discounted_payoff = 0;
+		if (financialProduct == "Call")
+		{
+			discounted_payoff = fmax(terminal_value - strike, 0) * exp(-shortRate * maturity);
+		}
+		if (financialProduct == "Put")
+		{
+			discounted_payoff = fmax(strike - terminal_value, 0) * exp(-shortRate * maturity);
 		}
 		res += discounted_payoff;
 		payoffSimulationTab[i] = discounted_payoff;

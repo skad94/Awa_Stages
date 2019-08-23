@@ -62,7 +62,7 @@ int main()
 
 	int numTimeSteps = 50;
 	double maturity = 1.0 / 12;
-	int numSimulationsMC = 100;
+	int numSimulationsMC = 500;
 	double dt = maturity / numTimeSteps;
 	//double HurstExponent = 0.1;
 	//double rho = -0.5;
@@ -74,9 +74,11 @@ int main()
 			CovarianceStandardBM(i, j) = Covariance_StandardBM((i + 1.) * dt, (j + 1.) * dt);
 	unique_ptr<cSquareMatrix> sigmaStandard = CovarianceStandardBM.Cholesky();*/
 
+
 	//rHeston
 	/*double stockPriceHeston = DiffusionRoughHeston(numTimeSteps, maturity, 
 		100, 10, 0.55, 1, 1, 1.2, 1, 0.5, 0.25);*/
+
 
 	//rBergomi
 	/*cSquareMatrix CovarianceMatrixBergomi(2 * numTimeSteps); //We fill the covariance matrix for Wtilde and Z
@@ -92,10 +94,12 @@ int main()
 	unique_ptr<cSquareMatrix> sigmaBergomi = CovarianceMatrixBergomi.Cholesky();*/
 	//double stockPriceBergomi = DiffusionRoughBergomi(numTimeSteps, maturity, 100, 0.005, 0.2, sigmaBergomi);
 	
+
 	//Monte Carlo rBergomi
 	/*double MCprice = MonteCarlo_rBergomi_Call(1000, numTimeSteps, maturity, 100, 0.005, 0.2,
 		sigmaBergomi, 95, 0.01);
 	cout << "Monte Carlo price : " << MCprice << endl;*/
+
 
 	//Lifted Heston
 	/*double stockPriceLiftedHeston = DiffusionLiftedHeston(numTimeSteps, maturity, 20, 2.5, 10, 0.02,
@@ -118,15 +122,29 @@ int main()
 		cout << MonteCarlo_pricing("Call", "LiftedHeston", numSimulationsMC, numTimeSteps, maturity, 
 			2900, 0, nn[i], 1.0 + 10 / pow(nn[i], 0.9)) << endl;*/
 
-	//Variance swap pricing
-	cout << VarianceDerivatives_pricing_rHeston("VarianceSwap", numSimulationsMC, numTimeSteps, maturity, 
+
+	//Variance derivatives pricing
+	/*cout << VarianceDerivatives_pricing_rHeston("VarianceSwap", numSimulationsMC, numTimeSteps, maturity, 
 		0.02, 0.1, 0.3, 0.02, 0.3, 0.1414, 0) << endl; //sqrt(0.02) ~ 0.1414 so sigma_0 ~ sigma_K 
 	                                                   //(where sigma_K = strike)
 	cout << VarianceDerivatives_pricing_rHeston("Call", numSimulationsMC, numTimeSteps, maturity,
 		0.02, 0.1, 0.3, 0.02, 0.3, 0.1414* sqrt(maturity), 0) << endl;
 	cout << VarianceDerivatives_pricing_rHeston("Put", numSimulationsMC, numTimeSteps, maturity,
-		0.02, 0.1, 0.3, 0.02, 0.3, 0.1414* sqrt(maturity), 0) << endl;
+		0.02, 0.1, 0.3, 0.02, 0.3, 0.1414* sqrt(maturity), 0) << endl;*/
 
+
+	//VIX options pricing
+	/*unique_ptr<vector<double>> marketPrices(new vector<double>{ 3.5,2.76,2.27,2.05 });
+	unique_ptr<vector<double>> maturities(new vector<double>{ 1.0 / 12 });
+	unique_ptr<vector<double>> strikes(new vector<double>{ 0.15,0.16,0.17,0.18 });
+	double VIX = 0.1577;
+	string financialProduct = "Call";
+	ShowVector(*CalibrateRoughHeston_AbiJaber(VIX, marketPrices, maturities, strikes, financialProduct, 
+		numSimulationsMC, numTimeSteps, 0));*/
+	cout << VIX_options_pricing_rHeston("Call", numSimulationsMC, numTimeSteps, maturity,
+		0.1810*0.1810, 0.1, 0.3, 0.05, 0.45, 0.4, 0) << endl;
+	cout << VIX_options_pricing_rHeston("Put", numSimulationsMC, numTimeSteps, maturity,
+		0.1810* 0.1810, 0.1, 0.3, 0.05, 0.45, 0.4, 0) << endl;
 
 
 

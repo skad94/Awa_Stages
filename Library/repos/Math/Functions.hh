@@ -51,6 +51,11 @@ double DiffusionRoughHeston_AbiJaber(int numTimeSteps, double maturity, double S
 unique_ptr<vector<double>> VariancePath_RoughHeston_AbiJaber(int numTimeSteps, double maturity, 
 	double V0, double H, double lambda, double theta, double nu);
 
+unique_ptr<vector<double>> CalibrateRoughHeston_AbiJaber(double VIX, 
+	const unique_ptr<vector<double>>& marketPrices, const unique_ptr<vector<double>>& maturities, 
+	const unique_ptr<vector<double>>& strikes, string financialProduct, int numMonteCarloSimulations, 
+	int numTimeSteps, double shortRate);
+
 
 // rBergomi
 
@@ -103,6 +108,10 @@ double MonteCarlo_pricing(string financialProduct, string model, int numMonteCar
 	double rn = 2.5, const unique_ptr<cSquareMatrix>& sigma = unique_ptr<cSquareMatrix>(new cSquareMatrix(0)));
 
 double VarianceDerivatives_pricing_rHeston(string financialProduct, int numMonteCarloSimulations, 
+	int numTimeSteps, double maturity, double V0, double H, double lambda, double theta, double nu,
+	double strike, double shortRate);
+
+double VIX_options_pricing_rHeston(string financialProduct, int numMonteCarloSimulations,
 	int numTimeSteps, double maturity, double V0, double H, double lambda, double theta, double nu,
 	double strike, double shortRate);
 
